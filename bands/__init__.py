@@ -4,8 +4,8 @@ from PyQt6.QtTest import QTest
 from PyQt6.QtCore import pyqtSignal, QObject
 from bands.qtdesign import BandsAppWindow
 from bands.vaspbandtools import BandStructure
+from controller import AppController
 from functools import partial
-from os import name as osname
 from os import path as ospath
 import numpy as np
 
@@ -27,33 +27,25 @@ class BandsAppView(QDialog, BandsAppWindow):
         self.signal.closed.emit()
 
 
-class BandsAppController:
+class BandsAppController(AppController):
 
     def __init__(self, view):
         """
         connects buttons to functions
         :param view: BandsAppView instance
         """
-        self.view = view
-        self._disable_window()
-        osys = osname
-        if osys == "posix":
-            self.home_path = "/Users"
-        else:
-            self.home_path = "C:\\"
+        super().__init__(view)
         # Connecting buttons to functions
-        self.view.atom_tabs.currentChanged.connect(self._clear_atom_tabs)
-        self.view.states_tabs.currentChanged.connect(self._clear_states_tabs)
-        self.view.browse_btn.clicked.connect(partial(self._browse, self.view))
-        self.view.load_btn.clicked.connect(self._load_data)
-        self.view.add_data_btn.clicked.connect(self._add_dataset)
-        self.view.remove_data_btn.clicked.connect(self._remove_dataset)
-        self.view.refresh_plot_btn.clicked.connect(self._toggle_plot)
+        self.view.browse_btn.clicked.connect(partial(self.browse, self.view))
+        self.view.load_btn.clicked.connect(self.load_data)
+        self.view.add_data_btn.clicked.connect(self.add_dataset)
+        self.view.remove_data_btn.clicked.connect(self.remove_dataset)
+        self.view.refresh_plot_btn.clicked.connect(self.toggle_plot)
         # path to sample file for debugging purposes
-        # self.view.load_txt.setText(
-        #     "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-bands/AgF2-sample/bands/vasprun.xml")
+        self.view.load_txt.setText(
+            "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-integrated/AgF2-sample/bands/vasprun.xml")
 
-    def _browse(self, view):
+    def browse(self, view):
         """
         Browse directories
         """
@@ -62,7 +54,7 @@ class BandsAppController:
         new_home_path = ospath.dirname(ospath.dirname(chosen_file))
         self.home_path = new_home_path
 
-    def _load_data(self):
+    def load_data(self):
         """
         Load VASP output into a Bandstructure object
         """
@@ -98,26 +90,26 @@ class BandsAppController:
                 self.loaded_data.leveldict["dx2"] = self.loaded_data.leveldict.pop("x2-y2")
             while self.view.ax._children:
                 self.view.ax._children[0].remove()
-            self._toggle_plot()
-            self._adjust_window()
+            self.toggle_plot()
+            self.adjust_window()
             QTest.qWait(5)
             self.view.load_label.setText("Plotting...")
             QTest.qWait(5)
-            self._plot_basic_bands()
+            self.plot_basic_bands()
             msg = f"<b>{self.loaded_data.name}</b> system was loaded successfully"
             self.view.load_label.setText(msg)
         except Exception as e:
             self.view.load_label.setText(e.args[0])
             QTest.qWait(2000)
             self.view.load_label.setText("Browse files and load a system")
-            self._disable_window()
+            self.disable_window()
 
-    def _adjust_window(self):
+    def adjust_window(self):
         """
         Method for selectively enabling functionalities in the window
         based on the loaded VASP data
         """
-        self._disable_window()
+        self.disable_window()
         # enable and load atoms
         self.view.atom_sel_box.setEnabled(True)
         self.view.atom_comb.clear()
@@ -147,54 +139,7 @@ class BandsAppController:
         self.view.datasets_list.clear()
         self.view.properties_box.setEnabled(True)
 
-    def _disable_window(self):
-        """
-        Method for disabling functions in the window
-        """
-        self.view.atom_sel_box.setDisabled(True)
-        self._reset_input()
-        self.view.states_box.setDisabled(True)
-        self.view.spin_box.setDisabled(True)
-        for btn in self.view.dataset_btns:
-            btn.setDisabled(True)
-        self.view.datasets_list.clear()
-        self.view.datasets_list.setDisabled(True)
-        for box in self.view.subshell_box_list:
-            box.setDisabled(True)
-        for box in self.view.orbital_box_list:
-            box.setDisabled(True)
-        self.view.properties_box.setDisabled(True)
-
-    def _reset_input(self):
-        """
-        Resets selection in the window
-        """
-        self._clear_atom_tabs()
-        self._clear_states_tabs()
-        self.view.name_text.clear()
-        self.view.color_comb.setCurrentIndex(0)
-        self.view.spin_btn_group.setExclusive(False)
-        for btn in self.view.spin_btn_list:
-            btn.setChecked(False)
-        self.view.spin_btn_group.setExclusive(True)
-
-    def _clear_atom_tabs(self):
-        """
-        Method for resetting input in atom tabs
-        """
-        self.view.atom_comb.setCurrentIndex(0)
-        self.view.atom_text.clear()
-
-    def _clear_states_tabs(self):
-        """
-        Method for resetting input in states tabs
-        """
-        for box in self.view.subshell_box_list:
-            box.setChecked(False)
-        for box in self.view.orbital_box_list:
-            box.setChecked(False)
-
-    def _add_dataset(self):
+    def add_dataset(self):
         """
         Creates projected bands based on user selection and
         adds it to dataset list and to plot
@@ -238,18 +183,18 @@ class BandsAppController:
                     self.view.ax.scatter(self.loaded_data.xaxis, self.loaded_data.bands[0, :, i],
                                          s=markers, color=color, label=sel_dataset.name)
                 self.view.dataset_label.setText("Dataset successfully added")
-                self._reset_input()
+                self.reset_input()
             except Exception as e:
                 print(e)
                 self.view.dataset_label.setText(e.args[0])
         else:
             self.view.dataset_label.setText("Make sure you made a valid (non-null) selection")
-        self._toggle_plot()
-        self._populate_items()
+        self.toggle_plot()
+        self.populate_items()
         QTest.qWait(2000)
         self.view.dataset_label.setText("Select atoms and states, and add them to datasets")
 
-    def _remove_dataset(self):
+    def remove_dataset(self):
         """
         Removes a dataset from dataset list
         """
@@ -263,10 +208,10 @@ class BandsAppController:
             self.view.dataset_label.setText("Select a dataset to remove")
             QTest.qWait(2000)
             self.view.dataset_label.setText("Select atoms and states, and add them to datasets")
-        self._populate_items()
-        self._toggle_plot()
+        self.populate_items()
+        self.toggle_plot()
 
-    def _populate_items(self):
+    def populate_items(self):
         """
         Method for refreshing content of dataset list
         """
@@ -280,7 +225,7 @@ class BandsAppController:
         for label in labels:
             self.view.datasets_list.addItem(f"{label}")
 
-    def _plot_basic_bands(self):
+    def plot_basic_bands(self):
         if self.view.ax.lines:
             low, high = self.view.ax.get_ylim()
         else:
@@ -298,7 +243,7 @@ class BandsAppController:
         self.view.ax.set_xticklabels([])
         self.view.canvas.draw()
 
-    def _toggle_plot(self):
+    def toggle_plot(self):
         kpoints = self.view.kpoint_text.text().replace(",", " ").split()
         if kpoints:
             try:

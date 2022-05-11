@@ -13,8 +13,8 @@ from PyQt6.QtTest import QTest
 from PyQt6.QtCore import pyqtSignal, QObject
 from dos.qtdesign import DosAppWindow
 import dos.vaspdostools as vdt
+from controller import AppController
 from functools import partial
-from os import name as osname
 from os import path as ospath
 import numpy as np
 
@@ -36,31 +36,26 @@ class DosAppView(QDialog, DosAppWindow):
         self.signal.closed.emit()
 
 
-class DosAppController:
+class DosAppController(AppController):
     def __init__(self, view):
         """
         connects buttons to functions
         :param view: DosAppView instance
         """
-        self.view = view
-        self._disable_window()
-        osys = osname
-        if osys == "posix":
-            self.home_path = "/Users"
-        else:
-            self.home_path = "C:\\"
+        super().__init__(view)
         # Connecting buttons to functions
-        self.view.atom_tabs.currentChanged.connect(self._clear_atom_tabs)
-        self.view.states_tabs.currentChanged.connect(self._clear_states_tabs)
-        self.view.browse_btn.clicked.connect(partial(self._browse, self.view))
-        self.view.load_btn.clicked.connect(self._load_data)
-        self.view.add_data_btn.clicked.connect(self._add_dataset)
-        self.view.add_total_btn.clicked.connect(self._add_total_dos)
-        self.view.remove_data_btn.clicked.connect(self._remove_dataset)
-        self.view.export_data_btn.clicked.connect(self._export_dataset)
-        self.view.refresh_plot_btn.clicked.connect(self._toggle_plot)
+        self.view.browse_btn.clicked.connect(partial(self.browse, self.view))
+        self.view.load_btn.clicked.connect(self.load_data)
+        self.view.add_data_btn.clicked.connect(self.add_dataset)
+        self.view.add_total_btn.clicked.connect(self.add_total_dos)
+        self.view.remove_data_btn.clicked.connect(self.remove_dataset)
+        self.view.export_data_btn.clicked.connect(self.export_dataset)
+        self.view.refresh_plot_btn.clicked.connect(self.toggle_plot)
+        # path to sample file for debugging purposes
+        self.view.load_txt.setText(
+            "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-integrated/AgF2-sample/dos/vasprun.xml")
 
-    def _browse(self, view):
+    def browse(self, view):
         """
         Browse directories
         """
@@ -69,13 +64,13 @@ class DosAppController:
         new_home_path = ospath.dirname(ospath.dirname(chosen_file))
         self.home_path = new_home_path
 
-    def _load_data(self):
+    def load_data(self):
         """
         Load VASP output into a Dos object
         """
         for line in self.view.ax.lines:
             self.view.ax.lines.remove(line)
-        self._toggle_plot()
+        self.toggle_plot()
         self.view.load_label.setText("Loading...")
         QTest.qWait(100)
         self.active_path = self.view.load_txt.text()
@@ -89,19 +84,19 @@ class DosAppController:
                 self.loaded_data.leveldict["dx2"] = self.loaded_data.leveldict.pop("x2-y2")
             msg = f"<b>{self.loaded_data.name}</b> system was loaded successfully"
             self.view.load_label.setText(msg)
-            self._adjust_window()
+            self.adjust_window()
         except Exception as e:
             self.view.load_label.setText(e.args[0])
             QTest.qWait(2000)
             self.view.load_label.setText("Browse files and load a system")
-            self._disable_window()
+            self.disable_window()
 
-    def _adjust_window(self):
+    def adjust_window(self):
         """
         Method for selectively enabling functionalities in the window
         based on the loaded VASP data
         """
-        self._disable_window()
+        self.disable_window()
         # enable and load atoms
         self.view.atom_sel_box.setEnabled(True)
         self.view.atom_comb.clear()
@@ -131,41 +126,7 @@ class DosAppController:
         self.view.datasets_list.clear()
         self.view.properties_box.setEnabled(True)
 
-    def _disable_window(self):
-        """
-        Method for disabling functions in the window
-        """
-        self.view.atom_sel_box.setDisabled(True)
-        self._reset_input()
-        self.view.states_box.setDisabled(True)
-        self.view.spin_box.setDisabled(True)
-        for btn in self.view.dataset_btns:
-            btn.setDisabled(True)
-        self.view.datasets_list.clear()
-        self.view.datasets_list.setDisabled(True)
-        for box in self.view.subshell_box_list:
-            box.setDisabled(True)
-        for box in self.view.orbital_box_list:
-            box.setDisabled(True)
-        self.view.properties_box.setDisabled(True)
-
-    def _clear_atom_tabs(self):
-        """
-        Method for resetting input in atom tabs
-        """
-        self.view.atom_comb.setCurrentIndex(0)
-        self.view.atom_text.clear()
-
-    def _clear_states_tabs(self):
-        """
-        Method for resetting input in states tabs
-        """
-        for box in self.view.subshell_box_list:
-            box.setChecked(False)
-        for box in self.view.orbital_box_list:
-            box.setChecked(False)
-
-    def _add_dataset(self):
+    def add_dataset(self):
         """
         Creates resolved DOS based on user selection and
         adds it to dataset list
@@ -205,18 +166,18 @@ class DosAppController:
                                   color=color, label=sel_dataset.name,
                                   linewidth=4)
                 self.view.dataset_label.setText("Dataset successfully added")
-                self._reset_input()
+                self.reset_input()
             except Exception as e:
                 print(e)
                 self.view.dataset_label.setText(e.args[0])
         else:
             self.view.dataset_label.setText("Make sure you made a valid (non-null) selection")
-        self._populate_items()
-        self._toggle_plot()
+        self.populate_items()
+        self.toggle_plot()
         QTest.qWait(2000)
         self.view.dataset_label.setText("Select atoms and states, and add them to datasets")
 
-    def _add_total_dos(self):
+    def add_total_dos(self):
         """
         Selects total DOS from the Dos object and
         adds it to dataset list
@@ -233,13 +194,13 @@ class DosAppController:
                           color=color, label=sel_dataset.name,
                           linewidth=4)
         self.view.dataset_label.setText("Dataset successfully added")
-        self._reset_input()
-        self._populate_items()
-        self._toggle_plot()
+        self.reset_input()
+        self.populate_items()
+        self.toggle_plot()
         QTest.qWait(2000)
         self.view.dataset_label.setText("Select atoms and states, and add them to datasets")
 
-    def _populate_items(self):
+    def populate_items(self):
         """
         Functions for refreshing content of dataset list
         """
@@ -247,29 +208,16 @@ class DosAppController:
         for line in self.view.ax.lines:
             self.view.datasets_list.addItem(f"{line._label}")
 
-    def _remove_dataset(self):
+    def remove_dataset(self):
         """
         Removes a dataset from dataset list
         """
         if self.view.ax.lines:
             self.view.ax.lines.remove(self.view.ax.lines[self.view.datasets_list.currentRow()])
-            self._populate_items()
-        self._toggle_plot()
+            self.populate_items()
+        self.toggle_plot()
 
-    def _reset_input(self):
-        """
-        Resets selection in the window
-        """
-        self._clear_atom_tabs()
-        self._clear_states_tabs()
-        self.view.name_text.clear()
-        self.view.color_comb.setCurrentIndex(0)
-        self.view.spin_btn_group.setExclusive(False)
-        for btn in self.view.spin_btn_list:
-            btn.setChecked(False)
-        self.view.spin_btn_group.setExclusive(True)
-
-    def _export_dataset(self):
+    def export_dataset(self):
         """
         Saves the selected dataset to .csv file
         (see DosLib documentation for details)
@@ -279,7 +227,7 @@ class DosAppController:
             path_to_save = ospath.dirname(self.active_path)
             np.savetxt(f"{path_to_save}/{to_save._label}.csv", to_save._xy, fmt='%.7f', delimiter=",")
 
-    def _toggle_plot(self):
+    def toggle_plot(self):
         try:
             if len(self.view.ax.lines) > 0:
                 low, high = self.view.ax.get_xlim()
@@ -295,7 +243,7 @@ class DosAppController:
             QTest.qWait(2000)
             self.view.dataset_label.setText("Add datasets by selecting atoms and states, or plot datasets")
         self.view.canvas.draw()
-        self._populate_items()
+        self.populate_items()
 
 
 def main():
