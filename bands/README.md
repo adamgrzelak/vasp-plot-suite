@@ -17,7 +17,7 @@ in the structure
 - You can manipulate and save the plot using built-in <code>matplotlib</code> toolbar
 
 ### Executables
-This program can be compliled into an executable.
+This program can be compliled into an executable.<br>
 I can provide ones for Windows or MacOS upon request.
 
 ### This program is still being tested

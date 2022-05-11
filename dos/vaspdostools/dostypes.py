@@ -1,8 +1,6 @@
 import numpy as np
-from matplotlib import pyplot as plt
 from scipy.integrate import trapz
 from scipy.interpolate import interp1d
-from itertools import cycle
 from lxml import etree
 
 
@@ -251,14 +249,6 @@ class Dos:
     def __str__(self):
         return f"DOS for {self.name}"
 
-    def plot(self, lower=None, upper=None):
-        """
-        creates DosPlot object from selected AtomicDos \n
-        see DosPlot class for more information \n
-        :return: DosPlot
-        """
-        return DosPlot([self], ['black'], lower=lower, upper=upper)
-
     def save(self, path):
         """
         saves eDOS to .csv file
@@ -280,69 +270,3 @@ class Dos:
         int_at_lower = trapz(new[new[:, 0] <= lower][:, 1], x=new[new[:, 0] <= lower][:, 0])
         int_at_upper = trapz(new[new[:, 0] <= upper][:, 1], x=new[new[:, 0] <= upper][:, 0])
         return int_at_upper - int_at_lower
-
-
-class DosPlot:
-    """
-    Wrapper class for creating and storing a plot of DOS data.
-    """
-
-    def __init__(self, dos_objects, colors=None, lower=None, upper=None):
-        """
-        Initializes the plot with input data, and saves it into
-        fig and ax attributes, which can be modified using
-        matplotlib settings. \n
-        :param list dos_objects: Dos object(s) to plot
-        :param float lower: lower boundary for plot
-        :param float upper: upper boundary for plot
-        """
-        # get array of data
-        self.data = [d.dos for d in dos_objects]
-        self.names = [d.name for d in dos_objects]
-        if not colors:
-            c = cycle(["red", "cyan", "green", "magenta", "blue", "yellow"])
-        else:
-            c = cycle(colors)
-        self.colors = [next(c) for i in range(len(dos_objects))]
-        if not lower:
-            self.lower = min(min(d[:, 0]) for d in self.data)
-        else:
-            self.lower = lower
-        if not upper:
-            self.upper = max(max(d[:, 0]) for d in self.data)
-        else:
-            self.upper = upper
-        # trim data and draw plot
-        self.set_boundaries()
-        self.draw()
-
-    def set_boundaries(self):
-        """
-        Trim input DOS to set range \n
-        :return: np.ndarray, trimmed data
-        """
-        to_plot = []
-        for dat in self.data:
-            selected = dat[np.where((dat[:, 0] >= self.lower) & (dat[:, 0] <= self.upper))]
-            to_plot.append(selected)
-        self.ymax = max([dat[:, 1].max() for dat in to_plot]) * 1.1
-
-    def draw(self):
-        """
-        Generates plot \n
-        :return: matplotlib fig and axes objects
-        """
-        plot, ax = plt.subplots(figsize=[10, 7])
-        ax.set_xlabel('E [eV]', fontsize=20)
-        ax.set_ylabel('DOS [states / eV]', fontsize=20)
-        ax.tick_params(width=1, length=5, labelsize=20)
-        ax.set_xlim(self.lower, self.upper)
-        ax.set_ylim(0, self.ymax)
-        ax.vlines(0, 0, self.ymax, colors='gray', linestyles='dashed', linewidth=4)
-        for d, n, c in zip(self.data, self.names, self.colors):
-            ax.plot(d[:, 0], d[:, 1], linewidth=4, label=n, color=c)
-        legend = plt.legend(prop={'size': 15})
-        self.plot, self.ax, self.legend = plot, ax, legend
-
-    def save(self, filename="plot.jpg", dpi=300):
-        self.plot.savefig(filename, dpi=dpi, bbox_inches='tight')

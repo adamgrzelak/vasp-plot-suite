@@ -6,7 +6,7 @@ AG, 2022 \n
 
 
 import numpy as np
-from dos.vaspdostools.dostypes import RawDos, Dos, DosPlot
+from dos.vaspdostools.dostypes import RawDos, Dos
 
 
 def extract(directory):

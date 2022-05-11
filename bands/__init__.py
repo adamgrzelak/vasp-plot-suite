@@ -1,12 +1,10 @@
 from sys import exit
-from PyQt6.QtWidgets import QApplication, QDialog, QFileDialog
+from PyQt6.QtWidgets import QApplication, QDialog
 from PyQt6.QtTest import QTest
 from PyQt6.QtCore import pyqtSignal, QObject
 from bands.qtdesign import BandsAppWindow
 from bands.vaspbandtools import BandStructure
 from controller import AppController
-from functools import partial
-from os import path as ospath
 import numpy as np
 
 
@@ -35,24 +33,10 @@ class BandsAppController(AppController):
         :param view: BandsAppView instance
         """
         super().__init__(view)
-        # Connecting buttons to functions
-        self.view.browse_btn.clicked.connect(partial(self.browse, self.view))
-        self.view.load_btn.clicked.connect(self.load_data)
-        self.view.add_data_btn.clicked.connect(self.add_dataset)
-        self.view.remove_data_btn.clicked.connect(self.remove_dataset)
-        self.view.refresh_plot_btn.clicked.connect(self.toggle_plot)
+        self.view.refresh_plot_btn.clicked.connect(self.refresh_plot)
         # path to sample file for debugging purposes
         self.view.load_txt.setText(
             "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-integrated/AgF2-sample/bands/vasprun.xml")
-
-    def browse(self, view):
-        """
-        Browse directories
-        """
-        chosen_file = QFileDialog.getOpenFileName(view, "Choose file:", self.home_path, "(vasprun.xml)")[0]
-        self.view.load_txt.setText(chosen_file)
-        new_home_path = ospath.dirname(ospath.dirname(chosen_file))
-        self.home_path = new_home_path
 
     def load_data(self):
         """
@@ -104,99 +88,19 @@ class BandsAppController(AppController):
             self.view.load_label.setText("Browse files and load a system")
             self.disable_window()
 
-    def adjust_window(self):
-        """
-        Method for selectively enabling functionalities in the window
-        based on the loaded VASP data
-        """
-        self.disable_window()
-        # enable and load atoms
-        self.view.atom_sel_box.setEnabled(True)
-        self.view.atom_comb.clear()
-        self.view.atom_comb.addItems([""] + self.loaded_data.atomnames)
-        # enable spin if spin-polarized
-        if self.loaded_data.spin:
-            self.view.spin_box.setEnabled(True)
-        else:
-            self.view.spin_box.setDisabled(True)
-        # enable states and subshells
-        self.view.states_box.setEnabled(True)
-        self.view.subshell_tab.setEnabled(True)
-        for level in self.loaded_data.subshells:
-            self.view.subshell_box_dict[level].setEnabled(True)
-        # enable orbitals if lorbit is 11
-        if self.loaded_data.lorbit == 10:
-            self.view.orbital_tab.setDisabled(True)
-        else:
-            self.view.orbital_tab.setEnabled(True)
-            for level in self.loaded_data.subshells:
-                for box in self.view.orbital_box_dict[level]:
-                    box.setEnabled(True)
-        # enable processing buttons
-        for btn in self.view.dataset_btns:
-            btn.setEnabled(True)
-        self.view.datasets_list.setEnabled(True)
-        self.view.datasets_list.clear()
-        self.view.properties_box.setEnabled(True)
-
-    def add_dataset(self):
-        """
-        Creates projected bands based on user selection and
-        adds it to dataset list and to plot
-        """
-        if self.view.atom_tabs.currentIndex() == 0:
-            atoms = [self.view.atom_comb.currentText()]
-        else:
-            atoms = self.view.atom_text.text().split()
-            try:
-                atoms = np.array(atoms).astype(int)
-            except ValueError:
-                atoms = np.array(atoms)
-        states = []
-        if self.view.states_tabs.currentIndex() == 0:
-            for box in self.view.subshell_box_list:
-                if box.isChecked():
-                    states.append(box.text())
-        else:
-            for box in self.view.orbital_box_list:
-                if box.isChecked():
-                    states.append(box.text())
-        states = np.array(states)
-        if len(states) > 0:
-            states[np.where(states == "dx2-y2")] = "dx2"
-        if self.view.spin_box.isEnabled() and self.view.spin_btn_group.checkedButton() is not None:
-            spin = self.view.spin_btn_group.checkedButton().text()
-        else:
-            spin = "both"
-        color = self.view.color_comb.currentText()
-        name = self.view.name_text.text()
-        condition = (len(states) > 0) and (len(atoms) > 0) and \
-                    (not np.isin("", atoms)) and (name != "") and (color != "")
-        if condition:
-            try:
-                sel_dataset = self.loaded_data.select(atoms, states, spin, name)
-                for i in range(self.loaded_data.nbands):
-                    if sel_dataset.data.max() != 0:
-                        markers = sel_dataset.data[:, i] / sel_dataset.data.max() * 100
-                    else:
-                        markers = np.zeros(self.loaded_data.nkpts)
-                    self.view.ax.scatter(self.loaded_data.xaxis, self.loaded_data.bands[0, :, i],
-                                         s=markers, color=color, label=sel_dataset.name)
-                self.view.dataset_label.setText("Dataset successfully added")
-                self.reset_input()
-            except Exception as e:
-                print(e)
-                self.view.dataset_label.setText(e.args[0])
-        else:
-            self.view.dataset_label.setText("Make sure you made a valid (non-null) selection")
-        self.toggle_plot()
-        self.populate_items()
-        QTest.qWait(2000)
-        self.view.dataset_label.setText("Select atoms and states, and add them to datasets")
+    def plot_added_data(self, atoms, states, spin, name, color):
+        sel_dataset = self.loaded_data.select(atoms, states, spin, name)
+        for i in range(self.loaded_data.nbands):
+            if sel_dataset.data.max() != 0:
+                markers = sel_dataset.data[:, i] / sel_dataset.data.max() * 100
+            else:
+                markers = np.zeros(self.loaded_data.nkpts)
+            self.view.ax.scatter(self.loaded_data.xaxis, self.loaded_data.bands[0, :, i],
+                                 s=markers, color=color, label=sel_dataset.name)
 
     def remove_dataset(self):
         """
-        Removes a dataset from dataset list
+        Remove a dataset from dataset list
         """
         try:
             to_remove = self.view.datasets_list.currentItem().text()
@@ -213,7 +117,7 @@ class BandsAppController(AppController):
 
     def populate_items(self):
         """
-        Method for refreshing content of dataset list
+        Refresh content of dataset list
         """
         self.view.datasets_list.clear()
         labels = []
@@ -244,15 +148,20 @@ class BandsAppController(AppController):
         self.view.canvas.draw()
 
     def toggle_plot(self):
-        kpoints = self.view.kpoint_text.text().replace(",", " ").split()
-        if kpoints:
-            try:
-                self.view.ax.set_xticklabels(kpoints)
-            except Exception:
-                self.view.dataset_label.setText("Invalid k-point list")
-                QTest.qWait(2000)
-                self.view.dataset_label.setText("Add datasets by selecting atoms and states, or plot datasets")
         self.view.canvas.draw()
+
+    def refresh_plot(self):
+        self.add_kpoints()
+        self.view.canvas.draw()
+
+    def add_kpoints(self):
+        kpoints = self.view.kpoint_text.text().upper().replace(",", " ").replace("G", "Γ").split()
+        if len(kpoints) == len(self.view.ax.get_xticks()):
+            self.view.ax.set_xticklabels(kpoints)
+        else:
+            self.view.dataset_label.setText("Invalid k-point list")
+            QTest.qWait(2000)
+            self.view.dataset_label.setText("Add datasets by selecting atoms and states, or plot datasets")
 
 
 def main():

@@ -31,7 +31,7 @@ I have also included sample data for AgF2 system if you want to give it a try.
 contact@adamgrzelak.com
 
 ### Update history
-10.05.2022 - incorporated <code>matplotlib</code> widget into the main window
-05.05.2022 - refactored the application to read <code>vasprun.xml</code>
+10.05.2022 - incorporated <code>matplotlib</code> widget into the main window<br>
+05.05.2022 - refactored the application to read <code>vasprun.xml</code><br>
 21.03.2022 - incorporated exception handling into vasp-dos-tools and refactored frontend to
 display them
