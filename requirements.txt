@@ -1,0 +1,5 @@
+PyQt6~=6.3.0
+matplotlib~=3.5.2
+numpy~=1.22.3
+scipy~=1.8.0
+lxml~=4.8.0

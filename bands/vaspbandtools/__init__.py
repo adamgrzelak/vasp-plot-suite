@@ -1,0 +1,1 @@
+from bands.vaspbandtools.bandstructure import BandStructure
