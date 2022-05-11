@@ -147,7 +147,6 @@ class BandsAppController(AppController):
         self.view.canvas.draw()
 
     def toggle_plot(self):
-        print(len(self.view.ax._children))
         if self.view.ax.get_legend():
             self.view.ax.get_legend().remove()
         if len(self.view.ax._children) > self.loaded_data.nbands+2:

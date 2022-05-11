@@ -79,7 +79,6 @@ class AppController:
                 self.view.dataset_label.setText("Dataset successfully added")
                 self.reset_input()
             except Exception as e:
-                print(e)
                 self.view.dataset_label.setText(e.args[0])
         else:
             self.view.dataset_label.setText("Make sure you made a valid (non-null) selection")
