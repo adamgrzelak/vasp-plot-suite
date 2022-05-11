@@ -70,12 +70,12 @@ class BandsAppController(AppController):
                 self.loaded_data.leveldict["dx2"] = self.loaded_data.leveldict.pop("x2-y2")
             while self.view.ax._children:
                 self.view.ax._children[0].remove()
-            self.toggle_plot()
             self.adjust_window()
             QTest.qWait(5)
             self.view.load_label.setText("Plotting...")
             QTest.qWait(5)
             self.plot_basic_bands()
+            self.toggle_plot()
             msg = f"<b>{self.loaded_data.name}</b> system was loaded successfully"
             self.view.load_label.setText(msg)
         except Exception as e:
@@ -122,7 +122,6 @@ class BandsAppController(AppController):
             if "_" not in line._label:
                 labels.append(line._label)
         labels = list(set(labels))
-        labels.remove("main")
         for label in labels:
             self.view.datasets_list.addItem(f"{label}")
 
@@ -135,7 +134,7 @@ class BandsAppController(AppController):
         else:
             low, high = self.loaded_data.bands.min() - 1, self.loaded_data.bands.max() + 1
         for i in range(self.loaded_data.nbands):
-            self.view.ax.plot(self.loaded_data.xaxis, self.loaded_data.bands[0, :, i], color="black", label="main")
+            self.view.ax.plot(self.loaded_data.xaxis, self.loaded_data.bands[0, :, i], color="black", label="_nolegend_")
         self.view.ax.hlines(0, 0, self.loaded_data.xaxis[-1], color="black", ls="--")
         vlines = self.loaded_data.xaxis[np.where(self.loaded_data.xaxis[1:] - self.loaded_data.xaxis[:-1] == 0)]
         vlines = np.insert(vlines, 0, 0)
@@ -148,11 +147,16 @@ class BandsAppController(AppController):
         self.view.canvas.draw()
 
     def toggle_plot(self):
+        print(len(self.view.ax._children))
+        if self.view.ax.get_legend():
+            self.view.ax.get_legend().remove()
+        if len(self.view.ax._children) > self.loaded_data.nbands+2:
+            self.legend = self.view.ax.legend(prop={'size': 15})
         self.view.canvas.draw()
 
     def refresh_plot(self):
         self.add_kpoints()
-        self.view.canvas.draw()
+        self.toggle_plot()
 
     def add_kpoints(self):
         """
