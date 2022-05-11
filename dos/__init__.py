@@ -36,11 +36,8 @@ class DosAppView(QDialog, DosAppWindow):
 
 
 class DosAppController(AppController):
+
     def __init__(self, view):
-        """
-        connects buttons to functions
-        :param view: DosAppView instance
-        """
         super().__init__(view)
         # Connecting buttons to functions
         self.view.add_total_btn.clicked.connect(self.add_total_dos)
@@ -52,7 +49,7 @@ class DosAppController(AppController):
 
     def load_data(self):
         """
-        Load VASP output into a Dos object
+        Load VASP output into a Dos object and plot it
         """
         for line in self.view.ax.lines:
             self.view.ax.lines.remove(line)
@@ -78,6 +75,9 @@ class DosAppController(AppController):
             self.disable_window()
 
     def plot_added_data(self, atoms, states, spin, name, color):
+        """
+        Plot selected resolved data
+        """
         sel_dataset = self.loaded_data.select(atoms, states, spin, name)
         self.view.ax.plot(sel_dataset.dos[:, 0], sel_dataset.dos[:, 1],
                           color=color, label=sel_dataset.name,
@@ -85,8 +85,8 @@ class DosAppController(AppController):
 
     def add_total_dos(self):
         """
-        Selects total DOS from the Dos object and
-        adds it to dataset list
+        Select total DOS from the Dos object and
+        add it to dataset list
         """
         if self.view.spin_box.isEnabled() and self.view.spin_btn_group.checkedButton() is not None:
             spin = self.view.spin_btn_group.checkedButton().text()
@@ -125,8 +125,7 @@ class DosAppController(AppController):
 
     def export_dataset(self):
         """
-        Saves the selected dataset to .csv file
-        (see DosLib documentation for details)
+        Save the selected dataset to .csv file
         """
         if len(self.view.ax.lines) > 0:
             to_save = self.view.ax.lines[self.view.datasets_list.currentRow()]
@@ -134,6 +133,9 @@ class DosAppController(AppController):
             np.savetxt(f"{path_to_save}/{to_save._label}.csv", to_save._xy, fmt='%.7f', delimiter=",")
 
     def toggle_plot(self):
+        """
+        Refresh plot area
+        """
         try:
             if len(self.view.ax.lines) > 0:
                 low, high = self.view.ax.get_xlim()

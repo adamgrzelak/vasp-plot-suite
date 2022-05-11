@@ -30,13 +30,13 @@ class RawDos:
         # get atomic info
         self.atomdict, self.atomnames, self.atomnumbers = self._atom_info()
 
-        # get electronic info from DOSCAR
+        # get electronic DOS info
         self.spin = None
         self.nedos, self.fermi = self._dos_info()
         self.totaldos, self.atomicdos, self.e = self._load_dos()
         self.e = self.e - self.fermi
 
-        # get names of levels from PROCAR
+        # get names of levels
         self.levels = self._load_levels()
         # check if subshell- or orbital-resolved
         if "px" in self.levels:

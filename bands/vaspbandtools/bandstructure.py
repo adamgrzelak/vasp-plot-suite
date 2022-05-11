@@ -23,7 +23,7 @@ class BandStructure(SimpleBands):
         :param iterable states: 1D array of selected states, matching levels in simplebands
         :param str spin: "up", "down" or "both"
         :param str name: name for the dataset
-        :return: numpy array with data
+        :return: ProjectedBands object
         """
 
         selected = self.proj_bands

@@ -28,10 +28,6 @@ class BandsAppView(QDialog, BandsAppWindow):
 class BandsAppController(AppController):
 
     def __init__(self, view):
-        """
-        connects buttons to functions
-        :param view: BandsAppView instance
-        """
         super().__init__(view)
         self.view.refresh_plot_btn.clicked.connect(self.refresh_plot)
         # path to sample file for debugging purposes
@@ -90,13 +86,15 @@ class BandsAppController(AppController):
 
     def plot_added_data(self, atoms, states, spin, name, color):
         sel_dataset = self.loaded_data.select(atoms, states, spin, name)
-        for i in range(self.loaded_data.nbands):
-            if sel_dataset.data.max() != 0:
-                markers = sel_dataset.data[:, i] / sel_dataset.data.max() * 100
-            else:
-                markers = np.zeros(self.loaded_data.nkpts)
-            self.view.ax.scatter(self.loaded_data.xaxis, self.loaded_data.bands[0, :, i],
-                                 s=markers, color=color, label=sel_dataset.name)
+        if sel_dataset.data.max() != 0:
+            markers = sel_dataset.data / sel_dataset.data.max() * 100
+            markers = markers.flatten("F")
+        else:
+            markers = np.zeros(self.loaded_data.nkpts*self.loaded_data.nbands)
+        new_xaxis = np.concatenate([self.loaded_data.xaxis]*self.loaded_data.nbands)
+        flattened_bands = self.loaded_data.bands[0,:,:].flatten("F")
+        self.view.ax.scatter(new_xaxis, flattened_bands,
+                             s=markers, color=color, label=sel_dataset.name)
 
     def remove_dataset(self):
         """
@@ -104,10 +102,9 @@ class BandsAppController(AppController):
         """
         try:
             to_remove = self.view.datasets_list.currentItem().text()
-            while to_remove in [line._label for line in self.view.ax._children]:
-                for line in self.view.ax._children:
-                    if line._label == to_remove:
-                        line.remove()
+            for line in self.view.ax._children:
+                if line._label == to_remove:
+                    line.remove()
         except Exception:
             self.view.dataset_label.setText("Select a dataset to remove")
             QTest.qWait(2000)
@@ -130,6 +127,9 @@ class BandsAppController(AppController):
             self.view.datasets_list.addItem(f"{label}")
 
     def plot_basic_bands(self):
+        """
+        Plot simple band structure as the background for further selection
+        """
         if self.view.ax.lines:
             low, high = self.view.ax.get_ylim()
         else:
@@ -155,6 +155,9 @@ class BandsAppController(AppController):
         self.view.canvas.draw()
 
     def add_kpoints(self):
+        """
+        Add tick names to k axis
+        """
         kpoints = self.view.kpoint_text.text().upper().replace(",", " ").replace("G", "Γ").split()
         if len(kpoints) == len(self.view.ax.get_xticks()):
             self.view.ax.set_xticklabels(kpoints)
