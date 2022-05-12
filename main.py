@@ -5,7 +5,6 @@ main script
 
 
 from PyQt6.QtWidgets import QApplication, QDialog
-from PyQt6.QtGui import QColor
 from sys import exit
 from mainwindow import MainWindow, buttonstyle
 from dos import DosAppView, DosAppController
@@ -13,9 +12,9 @@ from bands import BandsAppView, BandsAppController
 
 
 color1a = "#d90d1f"
-color1d = "#db6973"
+color1d = "#D98088"
 color2a = "#642870"
-color2d = "#7b5782"
+color2d = "#6C5870"
 
 
 class MainView(QDialog, MainWindow):
