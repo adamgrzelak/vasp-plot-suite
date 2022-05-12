@@ -12,11 +12,15 @@ class RawDos:
     - array of atomic DOS \n
     - spin-polarization (yes/no) and resolution (subshell/orbital) \n
     - Fermi energy \n
-    In order to get atom and/or orbital resolved DOS, use "select" method
+    Initialize as:
+    data = RawDos(<path to vasprun.xml file>)
+    In order to get atom and/or orbital resolved DOS, use "select" method as:
+    selected = data([atoms], [states], spin(, name))
     """
 
     def __init__(self, path_to_file):
         """
+        Constructor
         :param str path_to_file: address of vasprun.xml file
         """
 
@@ -100,7 +104,7 @@ class RawDos:
 
     def _atom_info(self):
         """
-        reads atomic info, used in constructor
+        read atomic info, used in constructor
         """
 
         atom_names = [a.text.strip() for a in self.xml.findall("atominfo/array[@name='atomtypes']/set/rc/c")][1::5]
@@ -115,7 +119,7 @@ class RawDos:
 
     def _dos_info(self):
         """
-        reads preliminary DOS info
+        read preliminary DOS info
         """
         nedos = int(self.xml.find("*/*/*[@name='NEDOS']").text)
         fermi = float(self.xml.find("*/*/*[@name='efermi']").text.strip())
@@ -123,7 +127,7 @@ class RawDos:
 
     def _load_dos(self):
         """
-        reads actual DOS, used in constructor
+        read actual DOS, used in constructor
         """
         totaldos = self.xml.findall("calculation/dos/total/array/set/set")
         if len(totaldos) == 2:
@@ -167,7 +171,7 @@ class RawDos:
         :param iterable states: 1D array of selected states, matching levels in raw dos
         :param str spin: "up", "down" or "both"
         :param str name: name for the dataset
-        :return: Dos
+        :return: Dos object instance
         """
 
         selected = self.atomicdos
@@ -235,7 +239,9 @@ class RawDos:
 class Dos:
     """
     Class for storing general Dos objects, selected from RawDos
-    or loaded from a file
+    or loaded from a file.
+    Data can be integrated using "integrate" method.
+    The data can then be plotted using other scripts.
     """
 
     def __init__(self, dos, name):
@@ -245,9 +251,6 @@ class Dos:
         """
         self.dos = dos
         self.name = name
-
-    def __str__(self):
-        return f"DOS for {self.name}"
 
     def save(self, path):
         """

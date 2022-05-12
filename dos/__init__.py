@@ -24,7 +24,7 @@ class Signal(QObject):
 
 class DosAppView(QDialog, DosAppWindow):
     """
-    Main window object
+    Main window object for DosApp
     """
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -44,28 +44,30 @@ class DosAppController(AppController):
         self.view.export_data_btn.clicked.connect(self.export_dataset)
         self.view.refresh_plot_btn.clicked.connect(self.toggle_plot)
         # path to sample file for debugging purposes
-        self.view.load_txt.setText(
-            "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-integrated/AgF2-sample/dos/vasprun.xml")
+        # self.view.load_txt.setText(
+        #     "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-integrated/AgF2-sample/dos/vasprun.xml")
 
     def load_data(self):
         """
-        Load VASP output into a Dos object and plot it
+        Load VASP output into a Dos object
         """
         for line in self.view.ax.lines:
             self.view.ax.lines.remove(line)
         self.toggle_plot()
+        QTest.qWait(5)
         self.view.load_label.setText("Loading...")
-        QTest.qWait(100)
+        QTest.qWait(5)
         self.active_path = self.view.load_txt.text()
         try:
-            self.selected_datasets = {}
             path_to_file = self.view.load_txt.text()
             self.loaded_data = vdt.extract(path_to_file)
             # account for different shorthands for dx2-y2 orbital depending on VASP version
             if "x2-y2" in self.loaded_data.levels:
                 self.loaded_data.levels[np.where(self.loaded_data.levels == "x2-y2")] = "dx2"
                 self.loaded_data.leveldict["dx2"] = self.loaded_data.leveldict.pop("x2-y2")
+            QTest.qWait(5)
             msg = f"<b>{self.loaded_data.name}</b> system was loaded successfully"
+            QTest.qWait(5)
             self.view.load_label.setText(msg)
             self.adjust_window()
         except Exception as e:

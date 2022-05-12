@@ -5,13 +5,22 @@ from lxml import etree
 class SimpleBands:
     """
     SimpleBands class for reading band structure (not resolved for ions and levels).
+    Initialize as:
+    data = SimpleBands(<path to your vasprun.xml file>)
+    This class is not intended to be used separately; all of its features and more
+    are implemented in the child BandStructure class.
     """
 
     def __init__(self, path_to_file):
         """
         Constructor
+        :param str path_to_file: address of vasprun.xml file
         """
-        self.xml = etree.parse(path_to_file)
+        try:
+            self.xml = etree.parse(path_to_file)
+        except OSError:
+            raise FileNotFoundError("vasprun.xml not present")
+
         self.name = self.xml.find("incar/i[@name='SYSTEM']").text.strip()
         self.efermi, self.nions, self.nkpts, self.nbands, self.levels, self.subshells, self.lorbit = self._read_info()
         self.atomdict, self.atomnames, self.atomnumbers = self._read_atom_info()

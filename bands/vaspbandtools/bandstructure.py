@@ -5,11 +5,19 @@ from bands.vaspbandtools.simplebands import SimpleBands
 class BandStructure(SimpleBands):
     """
     BandStructure for reading orbital- and ion-resolved data.
+    Inherits from SimpleBands and adds data selection funcionality.
+    Initialize as:
+    data = BandStructure(<path to your vasprun.xml file>)
+    If the data is spin-polarized, the array of projected bands is of the shape:
+    (2 (up and down spin), number of kpoints, number of bands, number of atoms/ions, number of levels (subshells or orbitals))
+    If it is not spin-polarized, the shape is:
+    (number of kpoints, number of bands, number of atoms/ions, number of levels (subshells or orbitals))
     """
 
     def __init__(self, path, load_all=True):
         """
-        Constructor. Inherit data from superclass SimpleBands.
+        Constructor
+        :param str path_to_file: address of vasprun.xml file
         """
         super().__init__(path)
         self.leveldict, self.spindict = self._get_level_dict()
@@ -23,7 +31,7 @@ class BandStructure(SimpleBands):
         :param iterable states: 1D array of selected states, matching levels in simplebands
         :param str spin: "up", "down" or "both"
         :param str name: name for the dataset
-        :return: ProjectedBands object
+        :return: ProjectedBands object, where data is of the shape (number of kpoints, number of bands)
         """
 
         selected = self.proj_bands
@@ -142,24 +150,10 @@ class BandStructure(SimpleBands):
         self.proj_bands = proj
 
 
-"""
-Example code for verbose tracking e.g. in the window version.
-
-data_per_point = system.nbands * 2 * system.nions
-gen = system._datagen()
-data = []
-i = 0
-for r in gen:
-    i += 1
-    if i % data_per_point == 0:
-        print(f"Processed {i // data_per_point}/{system.nkpts} k-points.", end="\r")
-    data.append(r)
-system._set_data(data)
-"""
-
 class ProjectedBands:
     """
-    Object for storing projected bands after selecting them
+    Object for storing projected bands after selecting them.
+    Consists simply of the data array and of the designated name.
     """
     def __init__(self, data, name):
         self.data = data

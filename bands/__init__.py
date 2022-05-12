@@ -1,3 +1,12 @@
+"""
+Application for plotting electronic band structure graphs
+from VASP calculation output
+Frontend based on PyQt6
+Backend is handled by VASP-Band-tools mini-library
+Developed by AG
+(C) 2022
+"""
+
 from sys import exit
 from PyQt6.QtWidgets import QApplication, QDialog
 from PyQt6.QtTest import QTest
@@ -14,7 +23,7 @@ class Signal(QObject):
 
 class BandsAppView(QDialog, BandsAppWindow):
     """
-    Main window object
+    Main window object for BandsApp
     """
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -31,12 +40,12 @@ class BandsAppController(AppController):
         super().__init__(view)
         self.view.refresh_plot_btn.clicked.connect(self.refresh_plot)
         # path to sample file for debugging purposes
-        self.view.load_txt.setText(
-            "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-integrated/AgF2-sample/bands/vasprun.xml")
+        # self.view.load_txt.setText(
+        #     "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-integrated/AgF2-sample/bands/vasprun.xml")
 
     def load_data(self):
         """
-        Load VASP output into a Bandstructure object
+        Load VASP output into a Bandstructure object and plot the simple bands
         """
         QTest.qWait(5)
         self.view.load_label.setText("Loading...")
@@ -85,6 +94,9 @@ class BandsAppController(AppController):
             self.disable_window()
 
     def plot_added_data(self, atoms, states, spin, name, color):
+        """
+        Plot selected resolved data
+        """
         sel_dataset = self.loaded_data.select(atoms, states, spin, name)
         if sel_dataset.data.max() != 0:
             markers = sel_dataset.data / sel_dataset.data.max() * 100
@@ -147,6 +159,9 @@ class BandsAppController(AppController):
         self.view.canvas.draw()
 
     def toggle_plot(self):
+        """
+        Refresh plot area
+        """
         if self.view.ax.get_legend():
             self.view.ax.get_legend().remove()
         if len(self.view.ax._children) > self.loaded_data.nbands+2:
@@ -154,6 +169,9 @@ class BandsAppController(AppController):
         self.view.canvas.draw()
 
     def refresh_plot(self):
+        """
+        Refresh plot area and update k-points list
+        """
         self.add_kpoints()
         self.toggle_plot()
 
