@@ -6,9 +6,9 @@ main script
 
 from PyQt6.QtWidgets import QApplication, QDialog
 from sys import exit
-from mainwindow import MainWindow, buttonstyle
-from dos import DosAppView, DosAppController
-from bands import BandsAppView, BandsAppController
+from vaspplotsuite.mainwindow.mainwindow import MainWindow, buttonstyle
+from vaspplotsuite.dos import DosAppView, DosAppController
+from vaspplotsuite.bands import BandsAppView, BandsAppController
 
 
 color1a = "#d90d1f"

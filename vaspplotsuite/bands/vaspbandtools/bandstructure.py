@@ -1,5 +1,5 @@
 import numpy as np
-from bands.vaspbandtools.simplebands import SimpleBands
+from vaspplotsuite.bands.vaspbandtools.simplebands import SimpleBands
 
 
 class BandStructure(SimpleBands):

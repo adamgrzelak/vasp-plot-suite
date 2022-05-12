@@ -1,12 +1,12 @@
 """
 VASP-DOS-tools - library for processing electronic density of states (eDOS) from VASP calculations \n
-Requires DOSCAR, POSCAR and PROCAR files present in the directory \n
+Reads data from vasprun.xml files
 AG, 2022 \n
 """
 
 
 import numpy as np
-from dos.vaspdostools.dostypes import RawDos, Dos
+from vaspplotsuite.dos.vaspdostools.dostypes import RawDos, Dos
 
 
 def extract(directory):

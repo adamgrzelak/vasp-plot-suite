@@ -11,9 +11,9 @@ from sys import exit
 from PyQt6.QtWidgets import QApplication, QDialog
 from PyQt6.QtTest import QTest
 from PyQt6.QtCore import pyqtSignal, QObject
-from dos.qtdesign import DosAppWindow
-import dos.vaspdostools as vdt
-from controller import AppController
+from vaspplotsuite.dos.qtdesign import DosAppWindow
+import vaspplotsuite.dos.vaspdostools as vdt
+from vaspplotsuite.mainwindow.controller import AppController
 from os import path as ospath
 import numpy as np
 

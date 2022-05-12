@@ -11,9 +11,9 @@ from sys import exit
 from PyQt6.QtWidgets import QApplication, QDialog
 from PyQt6.QtTest import QTest
 from PyQt6.QtCore import pyqtSignal, QObject
-from bands.qtdesign import BandsAppWindow
-from bands.vaspbandtools import BandStructure
-from controller import AppController
+from vaspplotsuite.bands.qtdesign import BandsAppWindow
+from vaspplotsuite.bands.vaspbandtools import BandStructure
+from vaspplotsuite.mainwindow.controller import AppController
 import numpy as np
 
 

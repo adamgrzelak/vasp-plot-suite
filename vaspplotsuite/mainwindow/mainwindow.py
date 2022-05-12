@@ -1,5 +1,5 @@
 from sys import exit
-from os import getcwd
+from os import path
 from PyQt6.QtWidgets import QSizePolicy, QPushButton, QApplication, QDialog, QLabel, QFrame, QWidget
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QMetaObject, QCoreApplication, QRect, QSize
@@ -104,7 +104,7 @@ class MainWindow(object):
         self.line.setObjectName("line")
         self.widget = QWidget(Window)
         self.widget.setGeometry(QRect(255, 75, 92, 80))
-        self.widget.setStyleSheet(f"background-image: url({getcwd()}/app-logo.png);")
+        self.widget.setStyleSheet(f"background-image: url({path.dirname(__file__)}/app-logo.png);")
         self.widget.setObjectName("widget")
 
         self.retranslateUi(Window)
