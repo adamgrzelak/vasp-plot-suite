@@ -1,3 +1,8 @@
+"""
+Vasp Plot Suite
+main script
+"""
+
 
 from PyQt6.QtWidgets import QApplication, QDialog
 from sys import exit
@@ -18,6 +23,9 @@ class MainView(QDialog, MainWindow):
         self.BandsButton.clicked.connect(self.open_bands_window)
 
     def open_dos_window(self):
+        """
+        Create and open new DosApp window
+        """
         self.dos_window = DosAppView()
         DosAppController(self.dos_window)
         self.DosButton.setDisabled(True)
@@ -28,6 +36,9 @@ class MainView(QDialog, MainWindow):
         self.DosButton.setEnabled(True)
 
     def open_bands_window(self):
+        """
+        Create and open new BandsApp window
+        """
         self.bands_window = BandsAppView()
         BandsAppController(self.bands_window)
         self.BandsButton.setDisabled(True)
