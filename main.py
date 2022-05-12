@@ -5,10 +5,17 @@ main script
 
 
 from PyQt6.QtWidgets import QApplication, QDialog
+from PyQt6.QtGui import QColor
 from sys import exit
-from mainwindow import MainWindow
+from mainwindow import MainWindow, buttonstyle
 from dos import DosAppView, DosAppController
 from bands import BandsAppView, BandsAppController
+
+
+color1a = "#d90d1f"
+color1d = "#db6973"
+color2a = "#642870"
+color2d = "#7b5782"
 
 
 class MainView(QDialog, MainWindow):
@@ -29,11 +36,13 @@ class MainView(QDialog, MainWindow):
         self.dos_window = DosAppView()
         DosAppController(self.dos_window)
         self.DosButton.setDisabled(True)
+        self.DosButton.setStyleSheet(buttonstyle(color1d))
         self.dos_window.signal.closed.connect(self.close_dos_window)
         self.dos_window.show()
 
     def close_dos_window(self):
         self.DosButton.setEnabled(True)
+        self.DosButton.setStyleSheet(buttonstyle(color1a))
 
     def open_bands_window(self):
         """
@@ -42,11 +51,13 @@ class MainView(QDialog, MainWindow):
         self.bands_window = BandsAppView()
         BandsAppController(self.bands_window)
         self.BandsButton.setDisabled(True)
+        self.BandsButton.setStyleSheet(buttonstyle(color2d))
         self.bands_window.signal.closed.connect(self.close_bands_window)
         self.bands_window.show()
 
     def close_bands_window(self):
         self.BandsButton.setEnabled(True)
+        self.BandsButton.setStyleSheet(buttonstyle(color2a))
 
 
 def main():

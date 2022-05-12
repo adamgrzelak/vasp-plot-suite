@@ -5,6 +5,10 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QMetaObject, QCoreApplication, QRect, QSize
 from PyQt6.QtCore import Qt
 
+def buttonstyle(color):
+    return f"background-color: {color}; color: white; border-radius: 5px; " \
+           f"border: solid; border-width: 1px;"
+
 
 class MainWindow(object):
     def setupUi(self, Window):
@@ -23,7 +27,7 @@ class MainWindow(object):
         font.setPointSize(35)
         self.DosButton.setFont(font)
         self.DosButton.setAutoFillBackground(False)
-        self.DosButton.setStyleSheet("background-color: #d90d1f; color: white; border-radius: 5px;")
+        self.DosButton.setStyleSheet(buttonstyle("#d90d1f"))
         self.DosButton.setIconSize(QSize(20, 20))
         self.DosButton.setObjectName("DosButton")
         self.BandsButton = QPushButton(Window)
@@ -32,7 +36,7 @@ class MainWindow(object):
         font.setFamily(".Apple SD Gothic NeoI")
         font.setPointSize(35)
         self.BandsButton.setFont(font)
-        self.BandsButton.setStyleSheet("background-color: #642870; color: white; border-radius: 5px;")
+        self.BandsButton.setStyleSheet(buttonstyle("#642870"))
         self.BandsButton.setObjectName("BandsButton")
         self.label = QLabel(Window)
         self.label.setGeometry(QRect(100, 20, 400, 30))
