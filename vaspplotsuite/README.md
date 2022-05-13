@@ -12,7 +12,7 @@ Instructions for each of module can be found in their respective README files.
 This library is available via pip:
 <code>pip install vaspplotsuite</code>
 
-After importing <code>vaspplotsuite</code>, just type <code>vaspplotsuite.run()</code> to run the program.
+After that, you can run in from your command line by typing <code>vaspplot</code>.
 
 ### Executables
 This program can be compliled into an executable.
@@ -27,6 +27,7 @@ I have also included sample data for AgF2 system if you want to give it a try.
 contact@adamgrzelak.com
 
 ### Update history
+13.05.2022 - v1.0.3: added command line script
 12.05.2022 - publication of version 1.0 Vasp Plot Suite as a whole on PyPI<br>
 11.05.2022 - publication of functional BandsApp<br>
 10.05.2022 - incorporated <code>matplotlib</code> widget into the main window<br>

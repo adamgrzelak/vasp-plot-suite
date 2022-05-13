@@ -38,7 +38,8 @@ setup(
     name="vaspplotsuite",  # Required
     packages=find_packages(),
     package_data={"": ["*.png"]},
-    version="1.0.2",
+    scripts=["vaspplotsuite/bin/vaspplot"],
+    version="1.0.3",
     license="MIT",
     description="A program for analysis and plotting of electronic from VASP output data",
     long_description=description,
