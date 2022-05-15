@@ -8,23 +8,19 @@ from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.backends.backend_qtagg import (
     FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
 from matplotlib.figure import Figure
+from vaspplotsuite.static import font
 
 
 class DosAppWindow(object):
 
-    font1 = QFont()
-    font1.setFamily("Arial")
+    font1 = QFont(font[0])
     font1.setPointSize(13)
-    font1.setBold(True)
     font1.setWeight(75)
-    font2 = QFont()
-    font1.setFamily("Arial")
+    font2 = QFont(font[0])
     font2.setPointSize(13)
     font2.setWeight(50)
-    font3 = QFont()
-    font1.setFamily("Arial")
+    font3 = QFont(font[0])
     font3.setPointSize(13)
-    font3.setItalic(True)
 
     def setupUi(self, main_window):
         # MAIN WINDOW INIT
@@ -397,18 +393,23 @@ class DosAppWindow(object):
         self.dataset_btn_layout.setObjectName("dataset_btn_layout")
         self.add_data_btn = QPushButton(self.widget)
         self.add_data_btn.setObjectName("add_data_btn")
+        self.add_data_btn.setFont(self.font3)
         self.dataset_btn_layout.addWidget(self.add_data_btn)
         self.add_total_btn = QPushButton(self.widget)
         self.add_total_btn.setObjectName("add_total_btn")
+        self.add_total_btn.setFont(self.font3)
         self.dataset_btn_layout.addWidget(self.add_total_btn)
         self.remove_data_btn = QPushButton(self.widget)
         self.remove_data_btn.setObjectName("remove_data_btn")
+        self.remove_data_btn.setFont(self.font3)
         self.dataset_btn_layout.addWidget(self.remove_data_btn)
         self.export_data_btn = QPushButton(self.widget)
         self.export_data_btn.setObjectName("export_data_btn")
+        self.export_data_btn.setFont(self.font3)
         self.dataset_btn_layout.addWidget(self.export_data_btn)
         self.refresh_plot_btn = QPushButton(self.widget)
         self.refresh_plot_btn.setObjectName("refresh_plot_btn")
+        self.refresh_plot_btn.setFont(self.font3)
         self.dataset_btn_layout.addWidget(self.refresh_plot_btn)
 
         self.dataset_btns = [self.add_data_btn, self.add_total_btn, self.remove_data_btn, self.export_data_btn, self.refresh_plot_btn]
@@ -433,7 +434,7 @@ class DosAppWindow(object):
 
     def retranslateUi(self, main_window):
         _translate = QCoreApplication.translate
-        main_window.setWindowTitle(_translate("main_window", "DosApp (C) AG"))
+        main_window.setWindowTitle(_translate("main_window", "DosApp © AG"))
         self.spin_box.setTitle(_translate("main_window", "Spin:"))
         self.spin_both_btn.setText(_translate("main_window", "both"))
         self.spin_up_btn.setText(_translate("main_window", "up"))

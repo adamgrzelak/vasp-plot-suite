@@ -3,28 +3,24 @@ from PyQt6.QtCore import QSize, QRect, Qt, QCoreApplication, QMetaObject
 from PyQt6.QtWidgets import QSizePolicy, QWidget, QVBoxLayout, QCheckBox, \
     QGridLayout, QLabel, QFrame, QGroupBox, QLineEdit, QComboBox, QListWidget, QPushButton,\
     QHBoxLayout, QRadioButton, QButtonGroup, QTabWidget
-from PyQt6.QtGui import QFont, QCursor
+from PyQt6.QtGui import QFont, QCursor, QFontDatabase, QGuiApplication
 from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.backends.backend_qtagg import (
     FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
 from matplotlib.figure import Figure
+from vaspplotsuite.static import font
 
 
 class BandsAppWindow(object):
 
-    font1 = QFont()
-    font1.setFamily("Arial")
+    font1 = QFont(font[0])
     font1.setPointSize(13)
-    font1.setBold(True)
     font1.setWeight(75)
-    font2 = QFont()
-    font1.setFamily("Arial")
+    font2 = QFont(font[0])
     font2.setPointSize(13)
     font2.setWeight(50)
-    font3 = QFont()
-    font1.setFamily("Arial")
+    font3 = QFont(font[0])
     font3.setPointSize(13)
-    font3.setItalic(True)
 
     def setupUi(self, main_window):
         # MAIN WINDOW INIT
@@ -397,17 +393,21 @@ class BandsAppWindow(object):
         self.dataset_btn_layout.setObjectName("dataset_btn_layout")
         self.add_data_btn = QPushButton(self.widget)
         self.add_data_btn.setObjectName("add_data_btn")
+        self.add_data_btn.setFont(self.font3)
         self.dataset_btn_layout.addWidget(self.add_data_btn)
         self.remove_data_btn = QPushButton(self.widget)
         self.remove_data_btn.setObjectName("remove_data_btn")
+        self.remove_data_btn.setFont(self.font3)
         self.dataset_btn_layout.addWidget(self.remove_data_btn)
         self.kpoint_text = QLineEdit(self.widget)
         self.kpoint_text.setFont(self.font2)
         self.kpoint_text.setText("")
         self.kpoint_text.setObjectName("kpoint_text")
+        self.kpoint_text.setFont(self.font3)
         self.dataset_btn_layout.addWidget(self.kpoint_text)
         self.refresh_plot_btn = QPushButton(self.widget)
         self.refresh_plot_btn.setObjectName("refresh_plot_btn")
+        self.refresh_plot_btn.setFont(self.font3)
         self.dataset_btn_layout.addWidget(self.refresh_plot_btn)
 
         self.dataset_btns = [self.add_data_btn, self.remove_data_btn, self.kpoint_text, self.refresh_plot_btn]
@@ -432,7 +432,7 @@ class BandsAppWindow(object):
 
     def retranslateUi(self, main_window):
         _translate = QCoreApplication.translate
-        main_window.setWindowTitle(_translate("main_window", "BandsApp (C) AG"))
+        main_window.setWindowTitle(_translate("main_window", "BandsApp © AG"))
         self.spin_box.setTitle(_translate("main_window", "Spin:"))
         self.spin_both_btn.setText(_translate("main_window", "both"))
         self.spin_up_btn.setText(_translate("main_window", "up"))

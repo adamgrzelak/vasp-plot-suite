@@ -39,9 +39,6 @@ class BandsAppController(AppController):
     def __init__(self, view):
         super().__init__(view)
         self.view.refresh_plot_btn.clicked.connect(self.refresh_plot)
-        # path to sample file for debugging purposes
-        # self.view.load_txt.setText(
-        #     "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-integrated/AgF2-sample/bands/vasprun.xml")
 
     def load_data(self):
         """

@@ -4,6 +4,8 @@ from PyQt6.QtWidgets import QSizePolicy, QPushButton, QApplication, QDialog, QLa
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QMetaObject, QCoreApplication, QRect, QSize
 from PyQt6.QtCore import Qt
+from vaspplotsuite.static import font
+
 
 def buttonstyle(color):
     return f"background-color: {color}; color: white; border-radius: 5px; " \
@@ -12,17 +14,13 @@ def buttonstyle(color):
 
 class MainWindow(object):
 
-    font1 = QFont()
-    font1.setFamily("Arial")
-    font1.setPointSize(35)
-    font2 = QFont()
-    font2.setFamily("Arial")
+    font1 = QFont(font[0])
+    font1.setPointSize(36)
+    font2 = QFont(font[0])
     font2.setPointSize(24)
-    font3 = QFont()
-    font3.setFamily("Arial")
+    font3 = QFont(font[0])
     font3.setPointSize(20)
-    font4 = QFont()
-    font4.setFamily("Arial")
+    font4 = QFont(font[0])
     font4.setPointSize(12)
 
     def setupUi(self, Window):
@@ -59,7 +57,7 @@ class MainWindow(object):
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setObjectName("label")
         self.label_2 = QLabel(Window)
-        self.label_2.setGeometry(QRect(50, 170, 500, 25))
+        self.label_2.setGeometry(QRect(30, 170, 540, 25))
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -117,7 +115,7 @@ class MainWindow(object):
         self.BandsButton.setText(_translate("Window", "Bands"))
         self.label.setText(_translate("Window", "Welcome to VASP Plot Suite!"))
         self.label_2.setText(_translate("Window", "What kind of output data would you like to analyze?"))
-        self.label_3.setText(_translate("Window", "Copyright (C) Adam Grzelak"))
+        self.label_3.setText(_translate("Window", "© Adam Grzelak"))
         self.label_4.setText(_translate("Window", "For questions and support: contact@adamgrzelak.com"))
         self.label_5.setText(_translate("Window", "www.adamgrzelak.com"))
 

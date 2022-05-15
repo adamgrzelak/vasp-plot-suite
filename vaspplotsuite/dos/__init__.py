@@ -43,9 +43,6 @@ class DosAppController(AppController):
         self.view.add_total_btn.clicked.connect(self.add_total_dos)
         self.view.export_data_btn.clicked.connect(self.export_dataset)
         self.view.refresh_plot_btn.clicked.connect(self.toggle_plot)
-        # path to sample file for debugging purposes
-        # self.view.load_txt.setText(
-        #     "/Users/adambialy/Documents/Coding/Python-portfolio/vasp-integrated/AgF2-sample/dos/vasprun.xml")
 
     def load_data(self):
         """
