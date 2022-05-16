@@ -29,8 +29,8 @@ I have also included sample data for AgF2 system if you want to give it a try.
 contact@adamgrzelak.com
 
 ### Update history
-15.05.2022 - v1.0.4: updated font
-13.05.2022 - v1.0.3: added command line script
+15.05.2022 - updated fonts<br>
+13.05.2022 - added command line script<br>
 12.05.2022 - publication of version 1.0 Vasp Plot Suite as a whole on PyPI<br>
 11.05.2022 - publication of functional BandsApp<br>
 10.05.2022 - incorporated <code>matplotlib</code> widget into the main window<br>
