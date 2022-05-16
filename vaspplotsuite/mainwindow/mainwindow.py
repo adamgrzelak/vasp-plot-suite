@@ -1,5 +1,6 @@
 from sys import exit
 from os import path
+from os import name as oname
 from PyQt6.QtWidgets import QSizePolicy, QPushButton, QApplication, QDialog, QLabel, QFrame, QWidget
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QMetaObject, QCoreApplication, QRect, QSize
@@ -14,14 +15,18 @@ def buttonstyle(color):
 
 class MainWindow(object):
 
+    if oname == "nt":
+        q = 0.75
+    else:
+        q = 1
     font1 = QFont(font[0])
-    font1.setPointSize(36)
+    font1.setPointSize(int(36*q))
     font2 = QFont(font[0])
-    font2.setPointSize(24)
+    font2.setPointSize(int(24*q))
     font3 = QFont(font[0])
-    font3.setPointSize(20)
+    font3.setPointSize(int(20*q))
     font4 = QFont(font[0])
-    font4.setPointSize(12)
+    font4.setPointSize(int(12*q))
 
     def setupUi(self, Window):
         Window.setObjectName("Window")
@@ -47,7 +52,7 @@ class MainWindow(object):
         self.BandsButton.setStyleSheet(buttonstyle("#642870"))
         self.BandsButton.setObjectName("BandsButton")
         self.label = QLabel(Window)
-        self.label.setGeometry(QRect(100, 20, 400, 30))
+        self.label.setGeometry(QRect(25, 20, 550, 30))
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -57,7 +62,7 @@ class MainWindow(object):
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setObjectName("label")
         self.label_2 = QLabel(Window)
-        self.label_2.setGeometry(QRect(30, 170, 540, 25))
+        self.label_2.setGeometry(QRect(10, 170, 580, 25))
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -67,7 +72,7 @@ class MainWindow(object):
         self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label_2.setObjectName("label_2")
         self.label_3 = QLabel(Window)
-        self.label_3.setGeometry(QRect(100, 340, 400, 25))
+        self.label_3.setGeometry(QRect(100, 340, 400, 30))
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -77,7 +82,7 @@ class MainWindow(object):
         self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.label_4 = QLabel(Window)
-        self.label_4.setGeometry(QRect(100, 380, 400, 25))
+        self.label_4.setGeometry(QRect(100, 380, 400, 30))
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -87,7 +92,7 @@ class MainWindow(object):
         self.label_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label_4.setObjectName("label_4")
         self.label_5 = QLabel(Window)
-        self.label_5.setGeometry(QRect(100, 360, 400, 25))
+        self.label_5.setGeometry(QRect(100, 360, 400, 30))
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -102,7 +107,9 @@ class MainWindow(object):
         self.line.setObjectName("line")
         self.widget = QWidget(Window)
         self.widget.setGeometry(QRect(255, 75, 92, 80))
-        self.widget.setStyleSheet(f"background-image: url({path.dirname(__file__)}/app-logo.png);")
+        path_to_img = path.join(path.dirname(__file__), "app-logo.png")
+        self.widget.setStyleSheet(f"background-image: url({path_to_img});")
+        print(self.widget.styleSheet())
         self.widget.setObjectName("widget")
 
         self.retranslateUi(Window)
@@ -110,7 +117,7 @@ class MainWindow(object):
 
     def retranslateUi(self, Window):
         _translate = QCoreApplication.translate
-        Window.setWindowTitle(_translate("Window", "VASP Plot Suite"))
+        Window.setWindowTitle(_translate("Window", "VASP Plot Suite © AG"))
         self.DosButton.setText(_translate("Window", "eDOS"))
         self.BandsButton.setText(_translate("Window", "Bands"))
         self.label.setText(_translate("Window", "Welcome to VASP Plot Suite!"))

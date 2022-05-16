@@ -9,18 +9,23 @@ from matplotlib.backends.backend_qtagg import (
     FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
 from matplotlib.figure import Figure
 from vaspplotsuite.static import font
+from os import name as oname
 
 
 class DosAppWindow(object):
 
+    if oname == "nt":
+        q = 0.8
+    else:
+        q = 1
     font1 = QFont(font[0])
-    font1.setPointSize(13)
+    font1.setPointSize(int(13*q))
     font1.setWeight(75)
     font2 = QFont(font[0])
-    font2.setPointSize(13)
+    font2.setPointSize(int(13*q))
     font2.setWeight(50)
     font3 = QFont(font[0])
-    font3.setPointSize(13)
+    font3.setPointSize(int(13*q))
 
     def setupUi(self, main_window):
         # MAIN WINDOW INIT

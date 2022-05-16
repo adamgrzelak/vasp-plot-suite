@@ -40,11 +40,11 @@ display them
 """
 
 setup(
-    name="vaspplotsuite",  # Required
+    name="vaspplotsuite",
     packages=find_packages(),
     package_data={"": ["*.png", "*.ttf"]},
     entry_points={"console_scripts": ["vaspplot=vaspplotsuite:run"]},
-    version="1.0.5",
+    version="1.0.6",
     license="MIT",
     description="A program for analysis and plotting of electronic from VASP output data",
     long_description=description,
