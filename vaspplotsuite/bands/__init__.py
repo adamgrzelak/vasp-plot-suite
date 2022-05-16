@@ -176,7 +176,7 @@ class BandsAppController(AppController):
         """
         Add tick names to k axis
         """
-        kpoints = self.view.kpoint_text.text().upper().replace(",", " ").replace("G", "Γ").split()
+        kpoints = self.view.kpoint_text.text().upper().replace(",", " ").replace("-"," ").replace("G", "Γ").split()
         if len(kpoints) == len(self.view.ax.get_xticks()):
             self.view.ax.set_xticklabels(kpoints)
         else:

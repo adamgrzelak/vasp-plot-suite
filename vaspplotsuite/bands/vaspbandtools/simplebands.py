@@ -105,9 +105,16 @@ class SimpleBands:
         Process the k-points and reciprocal lattice arrays in order to get
         the x-axis for plotting (with accurate distance in BZ)
         """
-        rel_coords = np.dot(self.kpoints, self.rec_lattice)
-        dists = rel_coords[1:] - rel_coords[:-1]
-        dists = (dists ** 2).sum(1) ** (1 / 2)
-        axis = dists.cumsum()
-        axis = np.insert(axis, 0, 0)
+        segment_length = int(self.xml.find("kpoints/*/*[@name='divisions']").text)
+        ticknum = int(self.nkpts / segment_length)
+        diffs = np.dot(self.kpoints, self.rec_lattice)
+        segments = []
+        for i in range(ticknum):
+            segment = diffs[i * segment_length:i * segment_length + segment_length]
+            dists = segment[1:] - segment[:-1]
+            dists = (dists ** 2).sum(1) ** (1 / 2)
+            dists = np.insert(dists, 0, 0)
+            segments.append(dists)
+        segments = np.concatenate(segments)
+        axis = segments.cumsum()
         return axis
