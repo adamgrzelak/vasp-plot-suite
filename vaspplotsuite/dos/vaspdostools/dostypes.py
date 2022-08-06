@@ -53,13 +53,14 @@ class RawDos:
 
         # creating dictionaries of levels and their indices
         self.leveldict = {}
-        for i in range(len(self.levels)):
-            if self.spin:
-                self.leveldict[self.levels[i]] = [2 * i, 2 * i + 1]
-                self.spindict = {"up": [0], "down": [1], "both": [0, 1]}
-            else:
-                self.leveldict[self.levels[i]] = [i]
-                self.spindict = None
+        if self.spin:
+            self.spindict = {"up": [0], "down": [1], "both": [0, 1]}
+            for i, level in enumerate(self.levels):
+                self.leveldict[level] = [2 * i, 2 * i + 1]
+        else:
+            self.spindict = None
+            for i, level in enumerate(self.levels):
+                self.leveldict[level] = [i]
         del self.xml
 
     def __str__(self):

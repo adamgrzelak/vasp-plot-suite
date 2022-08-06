@@ -97,12 +97,12 @@ class BandStructure(SimpleBands):
         Create dictionary of levels and spins for selection
         """
         leveldict = {}
-        for i in range(len(self.levels)):
-            leveldict[self.levels[i]] = [i]
-            if self.spin:
-                spindict = {"up": [0], "down": [1], "both": [0, 1]}
-            else:
-                spindict = None
+        for i, level in enumerate(self.levels):
+            leveldict[level] = [i]
+        if self.spin:
+            spindict = {"up": [0], "down": [1], "both": [0, 1]}
+        else:
+            spindict = None
         return leveldict, spindict
 
     def _get_proj_bands(self):

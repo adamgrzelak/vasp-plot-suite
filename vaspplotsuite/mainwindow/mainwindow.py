@@ -109,7 +109,6 @@ class MainWindow(object):
         self.widget.setGeometry(QRect(255, 75, 92, 80))
         path_to_img = path.join(path.dirname(__file__), "app-logo.png")
         self.widget.setStyleSheet(f"background-image: url({path_to_img});")
-        print(self.widget.styleSheet())
         self.widget.setObjectName("widget")
 
         self.retranslateUi(Window)
