@@ -2,7 +2,7 @@ import os
 from functools import partial
 
 import numpy as np
-from PyQt6.QtTest import QTest
+from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QFileDialog
 
 
@@ -96,9 +96,11 @@ class AppController:
             )
         self.toggle_plot()
         self.populate_items()
-        QTest.qWait(2000)
-        self.view.dataset_label.setText(
-            "Select atoms and states, and add them to datasets"
+        QTimer.singleShot(
+            2000,
+            lambda: self.view.dataset_label.setText(
+                "Select atoms and states, and add them to datasets"
+            ),
         )
 
     def plot_added_data(self, *args):

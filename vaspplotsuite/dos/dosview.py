@@ -3,7 +3,7 @@ import os
 import numpy as np
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtCore import QObject
-from PyQt6.QtTest import QTest
+from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QDialog
 
 from ..mainwindow.controller import AppController
@@ -44,9 +44,7 @@ class DosAppController(AppController):
         for line in self.view.ax.lines:
             self.view.ax.lines.remove(line)
         self.toggle_plot()
-        QTest.qWait(5)
-        self.view.load_label.setText("Loading...")
-        QTest.qWait(5)
+        QTimer.singleShot(5, lambda: self.view.load_label.setText("Loading..."))
         self.active_path = self.view.load_txt.text()
         try:
             path_to_file = self.view.load_txt.text()
@@ -59,15 +57,15 @@ class DosAppController(AppController):
                 self.loaded_data.leveldict["dx2"] = self.loaded_data.leveldict.pop(
                     "x2-y2"
                 )
-            QTest.qWait(5)
             msg = f"<b>{self.loaded_data.name}</b> system was loaded successfully"
-            QTest.qWait(5)
-            self.view.load_label.setText(msg)
+            QTimer.singleShot(5, lambda: self.view.load_label.setText(msg))
             self.adjust_window()
         except Exception as e:
             self.view.load_label.setText(e.args[0])
-            QTest.qWait(2000)
-            self.view.load_label.setText("Browse files and load a system")
+            QTimer.singleShot(
+                2000,
+                lambda: self.view.load_label.setText("Browse files and load a system"),
+            )
             self.disable_window()
 
     def plot_added_data(self, atoms, states, spin, name, color):
@@ -110,9 +108,11 @@ class DosAppController(AppController):
         self.reset_input()
         self.populate_items()
         self.toggle_plot()
-        QTest.qWait(2000)
-        self.view.dataset_label.setText(
-            "Select atoms and states, and add them to datasets"
+        QTimer.singleShot(
+            2000,
+            lambda: self.view.dataset_label.setText(
+                "Select atoms and states, and add them to datasets"
+            ),
         )
 
     def populate_items(self):
@@ -176,9 +176,11 @@ class DosAppController(AppController):
                     self.view.ax.get_legend().remove()
         except Exception as e:
             self.view.dataset_label.setText(e.args[0])
-            QTest.qWait(2000)
-            self.view.dataset_label.setText(
-                "Add datasets by selecting atoms and states, or plot datasets"
+            QTimer.singleShot(
+                2000,
+                lambda: self.view.dataset_label.setText(
+                    "Add datasets by selecting atoms and states, or plot datasets"
+                ),
             )
         self.view.canvas.draw()
         self.populate_items()

@@ -64,12 +64,15 @@ class MainView(QDialog, MainWindow):
         self.BandsButton.setStyleSheet(buttonstyle(color2a))
 
 
+application = QApplication(sys.argv)
+
+
 def main():
     """
     Main function - creates an instance of window (view)
     and applies controller to it
     """
-    application = QApplication(sys.argv)
+    global application
     view = MainView()
     view.show()
     sys.exit(application.exec())

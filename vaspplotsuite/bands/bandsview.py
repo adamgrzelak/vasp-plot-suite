@@ -1,7 +1,7 @@
 import numpy as np
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtCore import QObject
-from PyQt6.QtTest import QTest
+from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QDialog
 
 from ..mainwindow.controller import AppController
@@ -36,14 +36,12 @@ class BandsAppController(AppController):
         """
         Load VASP output into a Bandstructure object and plot the simple bands
         """
-        QTest.qWait(5)
-        self.view.load_label.setText("Loading...")
-        QTest.qWait(5)
+        QTimer.singleShot(5, lambda: self.view.load_label.setText("Loading..."))
         self.active_path = self.view.load_txt.text()
         try:
-            QTest.qWait(5)
-            self.view.load_label.setText("Loading bands...")
-            QTest.qWait(5)
+            QTimer.singleShot(
+                5, lambda: self.view.load_label.setText("Loading bands...")
+            )
             self.loaded_data = BandStructure(self.active_path, load_all=False)
             data_per_point = self.loaded_data.nbands * self.loaded_data.nions
             if self.loaded_data.spin:
@@ -54,15 +52,16 @@ class BandsAppController(AppController):
             for r in gen:
                 i += 1
                 if i % data_per_point == 0:
-                    QTest.qWait(5)
-                    self.view.load_label.setText(
-                        f"Processing k-point {i // data_per_point}/{self.loaded_data.nkpts}..."
+                    QTimer.singleShot(
+                        5,
+                        lambda: self.view.load_label.setText(
+                            f"Processing k-point {i // data_per_point}/{self.loaded_data.nkpts}..."
+                        ),
                     )
-                    QTest.qWait(5)
                 data.append(r)
-            QTest.qWait(5)
-            self.view.load_label.setText("Finishing up...")
-            QTest.qWait(5)
+            QTimer.singleShot(
+                5, lambda: self.view.load_label.setText("Finishing up...")
+            )
             self.loaded_data._set_data(data)
             # account for different shorthands for dx2-y2 orbital depending on VASP version
             if "x2-y2" in self.loaded_data.levels:
@@ -75,17 +74,17 @@ class BandsAppController(AppController):
             while self.view.ax._children:
                 self.view.ax._children[0].remove()
             self.adjust_window()
-            QTest.qWait(5)
-            self.view.load_label.setText("Plotting...")
-            QTest.qWait(5)
+            QTimer.singleShot(5, lambda: self.view.load_label.setText("Plotting..."))
             self.plot_basic_bands()
             self.toggle_plot()
             msg = f"<b>{self.loaded_data.name}</b> system was loaded successfully"
-            self.view.load_label.setText(msg)
+            QTimer.singleShot(5, lambda: self.view.load_label.setText(msg))
         except Exception as e:
             self.view.load_label.setText(e.args[0])
-            QTest.qWait(2000)
-            self.view.load_label.setText("Browse files and load a system")
+            QTimer.singleShot(
+                2000,
+                lambda: self.view.load_label.setText("Browse files and load a system"),
+            )
             self.disable_window()
 
     def plot_added_data(self, atoms, states, spin, name, color):
@@ -115,9 +114,11 @@ class BandsAppController(AppController):
                     line.remove()
         except Exception:
             self.view.dataset_label.setText("Select a dataset to remove")
-            QTest.qWait(2000)
-            self.view.dataset_label.setText(
-                "Select atoms and states, and add them to datasets"
+            QTimer.singleShot(
+                2000,
+                lambda: self.view.dataset_label.setText(
+                    "Select atoms and states, and add them to datasets"
+                ),
             )
         self.populate_items()
         self.toggle_plot()
@@ -201,7 +202,9 @@ class BandsAppController(AppController):
             self.view.ax.set_xticklabels(kpoints)
         else:
             self.view.dataset_label.setText("Invalid k-point list")
-            QTest.qWait(2000)
-            self.view.dataset_label.setText(
-                "Add datasets by selecting atoms and states, or plot datasets"
+            QTimer.singleShot(
+                2000,
+                lambda: self.view.dataset_label.setText(
+                    "Add datasets by selecting atoms and states, or plot datasets"
+                ),
             )
