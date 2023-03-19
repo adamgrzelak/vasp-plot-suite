@@ -2,13 +2,17 @@
 Vasp Plot Suite
 main script
 """
+import sys
 
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QDialog
 
-from PyQt6.QtWidgets import QApplication, QDialog
-from sys import exit
-from vaspplotsuite.mainwindow.mainwindow import MainWindow, buttonstyle
-from vaspplotsuite.dos import DosAppView, DosAppController
-from vaspplotsuite.bands import BandsAppView, BandsAppController
+from .bands import BandsAppController
+from .bands import BandsAppView
+from .dos import DosAppController
+from .dos import DosAppView
+from .mainwindow import MainWindow
+from .static import buttonstyle
 
 
 color1a = "#d90d1f"
@@ -22,6 +26,7 @@ class MainView(QDialog, MainWindow):
     Main window object. Details of the functioning of each of the modules
     can be found in their respective files and folders (dos and bands).
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -64,10 +69,10 @@ def main():
     Main function - creates an instance of window (view)
     and applies controller to it
     """
-    app = QApplication([])
+    application = QApplication([])
     view = MainView()
     view.show()
-    exit(app.exec())
+    sys.exit(application.exec())
 
 
 if __name__ == "__main__":

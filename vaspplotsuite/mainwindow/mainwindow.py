@@ -1,32 +1,38 @@
-from sys import exit
-from os import path
-from os import name as oname
-from PyQt6.QtWidgets import QSizePolicy, QPushButton, QApplication, QDialog, QLabel, QFrame, QWidget
-from PyQt6.QtGui import QFont
-from PyQt6.QtCore import QMetaObject, QCoreApplication, QRect, QSize
+import os
+import sys
+
+from PyQt6.QtCore import QCoreApplication
+from PyQt6.QtCore import QMetaObject
+from PyQt6.QtCore import QRect
+from PyQt6.QtCore import QSize
 from PyQt6.QtCore import Qt
-from vaspplotsuite.static import font
+from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QDialog
+from PyQt6.QtWidgets import QFrame
+from PyQt6.QtWidgets import QLabel
+from PyQt6.QtWidgets import QPushButton
+from PyQt6.QtWidgets import QSizePolicy
+from PyQt6.QtWidgets import QWidget
 
-
-def buttonstyle(color):
-    return f"background-color: {color}; color: white; border-radius: 5px; " \
-           f"border: solid; border-width: 1px;"
+from ..static import buttonstyle
+from ..static import font
 
 
 class MainWindow(object):
 
-    if oname == "nt":
+    if os.name == "nt":
         q = 0.75
     else:
         q = 1
     font1 = QFont(font[0])
-    font1.setPointSize(int(36*q))
+    font1.setPointSize(int(36 * q))
     font2 = QFont(font[0])
-    font2.setPointSize(int(24*q))
+    font2.setPointSize(int(24 * q))
     font3 = QFont(font[0])
-    font3.setPointSize(int(20*q))
+    font3.setPointSize(int(20 * q))
     font4 = QFont(font[0])
-    font4.setPointSize(int(12*q))
+    font4.setPointSize(int(12 * q))
 
     def setupUi(self, Window):
         Window.setObjectName("Window")
@@ -107,7 +113,7 @@ class MainWindow(object):
         self.line.setObjectName("line")
         self.widget = QWidget(Window)
         self.widget.setGeometry(QRect(255, 75, 92, 80))
-        path_to_img = path.join(path.dirname(__file__), "app-logo.png")
+        path_to_img = os.path.join(os.path.dirname(__file__), "app-logo.png")
         self.widget.setStyleSheet(f"background-image: url({path_to_img});")
         self.widget.setObjectName("widget")
 
@@ -120,9 +126,13 @@ class MainWindow(object):
         self.DosButton.setText(_translate("Window", "eDOS"))
         self.BandsButton.setText(_translate("Window", "Bands"))
         self.label.setText(_translate("Window", "Welcome to VASP Plot Suite!"))
-        self.label_2.setText(_translate("Window", "What kind of output data would you like to analyze?"))
+        self.label_2.setText(
+            _translate("Window", "What kind of output data would you like to analyze?")
+        )
         self.label_3.setText(_translate("Window", "© Adam Grzelak"))
-        self.label_4.setText(_translate("Window", "For questions and support: contact@adamgrzelak.com"))
+        self.label_4.setText(
+            _translate("Window", "For questions and support: contact@adamgrzelak.com")
+        )
         self.label_5.setText(_translate("Window", "www.adamgrzelak.com"))
 
 
@@ -132,4 +142,4 @@ if __name__ == "__main__":
     ui = MainWindow()
     ui.setupUi(Window)
     Window.show()
-    exit(app.exec())
+    sys.exit(app.exec())

@@ -1,9 +1,11 @@
+.DS_Store
 /window.ui
 /.idea/
-/__pycache__/
+__pycache__
 /RMF-LH-AF-d3/
 /dos-files/
 /Z-tests/
 /vaspplotsuite.egg-info/
 /dist/
 /NiH2_NaH4CaH1--spFM-spBS/
+.pre-commit-config.yaml
