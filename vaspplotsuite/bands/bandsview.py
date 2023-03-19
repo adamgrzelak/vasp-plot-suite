@@ -1,10 +1,7 @@
-import sys
-
 import numpy as np
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtCore import QObject
 from PyQt6.QtTest import QTest
-from PyQt6.QtWidgets import QApplication
 from PyQt6.QtWidgets import QDialog
 
 from ..mainwindow.controller import AppController
@@ -208,19 +205,3 @@ class BandsAppController(AppController):
             self.view.dataset_label.setText(
                 "Add datasets by selecting atoms and states, or plot datasets"
             )
-
-
-def main():
-    """
-    Main function - creates an instance of window (view)
-    and applies controller to it
-    """
-    app = QApplication([])
-    view = BandsAppView()
-    BandsAppController(view)
-    view.show()
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()

@@ -1,14 +1,10 @@
 import os
-import sys
 
-from PyQt6.QtCore import QCoreApplication
 from PyQt6.QtCore import QMetaObject
 from PyQt6.QtCore import QRect
 from PyQt6.QtCore import QSize
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QApplication
-from PyQt6.QtWidgets import QDialog
 from PyQt6.QtWidgets import QFrame
 from PyQt6.QtWidgets import QLabel
 from PyQt6.QtWidgets import QPushButton
@@ -121,25 +117,11 @@ class MainWindow(object):
         QMetaObject.connectSlotsByName(Window)
 
     def retranslateUi(self, Window):
-        _translate = QCoreApplication.translate
-        Window.setWindowTitle(_translate("Window", "VASP Plot Suite © AG"))
-        self.DosButton.setText(_translate("Window", "eDOS"))
-        self.BandsButton.setText(_translate("Window", "Bands"))
-        self.label.setText(_translate("Window", "Welcome to VASP Plot Suite!"))
-        self.label_2.setText(
-            _translate("Window", "What kind of output data would you like to analyze?")
-        )
-        self.label_3.setText(_translate("Window", "© Adam Grzelak"))
-        self.label_4.setText(
-            _translate("Window", "For questions and support: contact@adamgrzelak.com")
-        )
-        self.label_5.setText(_translate("Window", "www.adamgrzelak.com"))
-
-
-if __name__ == "__main__":
-    app = QApplication([])
-    Window = QDialog()
-    ui = MainWindow()
-    ui.setupUi(Window)
-    Window.show()
-    sys.exit(app.exec())
+        Window.setWindowTitle("VASP Plot Suite © AG")
+        self.DosButton.setText("eDOS")
+        self.BandsButton.setText("Bands")
+        self.label.setText("Welcome to VASP Plot Suite!")
+        self.label_2.setText("What kind of output data would you like to analyze?")
+        self.label_3.setText("© Adam Grzelak")
+        self.label_4.setText("For questions and support: contact@adamgrzelak.com")
+        self.label_5.setText("www.adamgrzelak.com")

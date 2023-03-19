@@ -69,11 +69,7 @@ def main():
     Main function - creates an instance of window (view)
     and applies controller to it
     """
-    application = QApplication([])
+    application = QApplication(sys.argv)
     view = MainView()
     view.show()
     sys.exit(application.exec())
-
-
-if __name__ == "__main__":
-    main()

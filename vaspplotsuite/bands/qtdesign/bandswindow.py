@@ -5,7 +5,6 @@ from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.figure import Figure
-from PyQt6.QtCore import QCoreApplication
 from PyQt6.QtCore import QMetaObject
 from PyQt6.QtCore import QRect
 from PyQt6.QtCore import QSize
@@ -40,10 +39,10 @@ class BandsAppWindow(object):
         q = 1
     font1 = QFont(font[0])
     font1.setPointSize(int(13 * q))
-    font1.setWeight(75)
+    font1.setWeight(QFont.Weight(75))
     font2 = QFont(font[0])
     font2.setPointSize(int(13 * q))
-    font2.setWeight(50)
+    font2.setWeight(QFont.Weight(50))
     font3 = QFont(font[0])
     font3.setPointSize(int(13 * q))
 
@@ -481,73 +480,52 @@ class BandsAppWindow(object):
         QMetaObject.connectSlotsByName(main_window)
 
     def retranslateUi(self, main_window):
-        _translate = QCoreApplication.translate
-        main_window.setWindowTitle(_translate("main_window", "BandsApp © AG"))
-        self.spin_box.setTitle(_translate("main_window", "Spin:"))
-        self.spin_both_btn.setText(_translate("main_window", "both"))
-        self.spin_up_btn.setText(_translate("main_window", "up"))
-        self.spin_down_btn.setText(_translate("main_window", "down"))
-        self.load_box.setTitle(_translate("main_window", "Load VASP output"))
-        self.load_txt.setPlaceholderText(
-            _translate("main_window", "Select directory...")
-        )
-        self.browse_btn.setText(_translate("main_window", "Browse..."))
-        self.load_btn.setText(_translate("main_window", "Load"))
-        self.atom_sel_box.setTitle(_translate("main_window", "Atoms:"))
-        self.atom_tabs.setTabText(
-            self.atom_tabs.indexOf(self.atom_sel_tab),
-            _translate("main_window", "Select"),
-        )
-        self.atom_text.setPlaceholderText(_translate("main_window", "List atoms..."))
-        self.atom_tabs.setTabText(
-            self.atom_tabs.indexOf(self.atom_list_tab),
-            _translate("main_window", "List"),
-        )
-        self.states_box.setTitle(_translate("main_window", "States:"))
-        self.ss_box.setText(_translate("main_window", "s"))
-        self.pp_box.setText(_translate("main_window", "p"))
-        self.dd_box.setText(_translate("main_window", "d"))
-        self.ff_box.setText(_translate("main_window", "f"))
+        main_window.setWindowTitle("BandsApp © AG")
+        self.spin_box.setTitle("Spin:")
+        self.spin_both_btn.setText("both")
+        self.spin_up_btn.setText("up")
+        self.spin_down_btn.setText("down")
+        self.load_box.setTitle("Load VASP output")
+        self.load_txt.setPlaceholderText("Select directory...")
+        self.browse_btn.setText("Browse...")
+        self.load_btn.setText("Load")
+        self.atom_sel_box.setTitle("Atoms:")
+        self.atom_tabs.setTabText(self.atom_tabs.indexOf(self.atom_sel_tab), "Select")
+        self.atom_text.setPlaceholderText("List atoms...")
+        self.atom_tabs.setTabText(self.atom_tabs.indexOf(self.atom_list_tab), "List")
+        self.states_box.setTitle("States:")
+        self.ss_box.setText("s")
+        self.pp_box.setText("p")
+        self.dd_box.setText("d")
+        self.ff_box.setText("f")
         self.states_tabs.setTabText(
-            self.states_tabs.indexOf(self.subshell_tab),
-            _translate("main_window", "Subshells"),
+            self.states_tabs.indexOf(self.subshell_tab), "Subshells"
         )
-        self.f1_box.setText(_translate("main_window", "f(1)"))
-        self.dxy_box.setText(_translate("main_window", "dxy"))
-        self.fn2_box.setText(_translate("main_window", "f(-2)"))
-        self.fn1_box.setText(_translate("main_window", "f(-1)"))
-        self.f0_box.setText(_translate("main_window", "f(0)"))
-        self.dyz_box.setText(_translate("main_window", "dyz"))
-        self.dxz_box.setText(_translate("main_window", "dxz"))
-        self.px_box.setText(_translate("main_window", "px"))
-        self.dx2_box.setText(_translate("main_window", "dx2-y2"))
-        self.dz2_box.setText(_translate("main_window", "dz2"))
-        self.fn3_box.setText(_translate("main_window", "f(-3)"))
-        self.s_box.setText(_translate("main_window", "s"))
-        self.py_box.setText(_translate("main_window", "py"))
-        self.pz_box.setText(_translate("main_window", "pz"))
-        self.f2_box.setText(_translate("main_window", "f(2)"))
-        self.f3_box.setText(_translate("main_window", "f(3)"))
+        self.f1_box.setText("f(1)")
+        self.dxy_box.setText("dxy")
+        self.fn2_box.setText("f(-2)")
+        self.fn1_box.setText("f(-1)")
+        self.f0_box.setText("f(0)")
+        self.dyz_box.setText("dyz")
+        self.dxz_box.setText("dxz")
+        self.px_box.setText("px")
+        self.dx2_box.setText("dx2-y2")
+        self.dz2_box.setText("dz2")
+        self.fn3_box.setText("f(-3)")
+        self.s_box.setText("s")
+        self.py_box.setText("py")
+        self.pz_box.setText("pz")
+        self.f2_box.setText("f(2)")
+        self.f3_box.setText("f(3)")
         self.states_tabs.setTabText(
-            self.states_tabs.indexOf(self.orbital_tab),
-            _translate("main_window", "Orbitals"),
+            self.states_tabs.indexOf(self.orbital_tab), "Orbitals"
         )
-        self.load_label.setText(
-            _translate("main_window", "Browse files and load a system")
-        )
-        self.properties_box.setTitle(_translate("main_window", "Properties"))
-        self.name_text.setPlaceholderText(
-            _translate("main_window", "Enter display name...")
-        )
-        self.datasets_box.setTitle(_translate("main_window", "Datasets"))
-        self.dataset_label.setText(
-            _translate(
-                "main_window", "Select atoms and states, and add them to datasets"
-            )
-        )
-        self.add_data_btn.setText(_translate("main_window", "Add dataset"))
-        self.remove_data_btn.setText(_translate("main_window", "Remove dataset"))
-        self.kpoint_text.setPlaceholderText(
-            _translate("main_window", "Enter a list of k-points...")
-        )
-        self.refresh_plot_btn.setText(_translate("main_window", "Refresh plot"))
+        self.load_label.setText("Browse files and load a system")
+        self.properties_box.setTitle("Properties")
+        self.name_text.setPlaceholderText("Enter display name...")
+        self.datasets_box.setTitle("Datasets")
+        self.dataset_label.setText("Select atoms and states, and add them to datasets")
+        self.add_data_btn.setText("Add dataset")
+        self.remove_data_btn.setText("Remove dataset")
+        self.kpoint_text.setPlaceholderText("Enter a list of k-points...")
+        self.refresh_plot_btn.setText("Refresh plot")

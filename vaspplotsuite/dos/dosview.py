@@ -1,11 +1,9 @@
 import os
-import sys
 
 import numpy as np
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtCore import QObject
 from PyQt6.QtTest import QTest
-from PyQt6.QtWidgets import QApplication
 from PyQt6.QtWidgets import QDialog
 
 from ..mainwindow.controller import AppController
@@ -184,19 +182,3 @@ class DosAppController(AppController):
             )
         self.view.canvas.draw()
         self.populate_items()
-
-
-def main():
-    """
-    Main function - creates an instance of window (view)
-    and applies controller to it
-    """
-    app = QApplication([])
-    view = DosAppView()
-    DosAppController(view)
-    view.show()
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()
