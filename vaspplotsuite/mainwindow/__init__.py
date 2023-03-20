@@ -1,2 +1,2 @@
-from vaspplotsuite.mainwindow.controller import AppController
-from vaspplotsuite.mainwindow.mainwindow import MainWindow
+from .controller import AppController
+from .mainwindow import MainWindow

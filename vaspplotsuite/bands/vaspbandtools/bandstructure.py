@@ -1,5 +1,6 @@
 import numpy as np
-from vaspplotsuite.bands.vaspbandtools.simplebands import SimpleBands
+
+from .simplebands import SimpleBands
 
 
 class BandStructure(SimpleBands):
@@ -36,9 +37,13 @@ class BandStructure(SimpleBands):
 
         selected = self.proj_bands
         if not type(atoms) in [np.ndarray, list]:
-            raise TypeError("Invalid input type for atoms selection. List or 1D numpy array is acceptable.")
+            raise TypeError(
+                "Invalid input type for atoms selection. List or 1D numpy array is acceptable."
+            )
         if not type(states) in [np.ndarray, list]:
-            raise TypeError("Invalid input type for states selection. List or 1D numpy array is acceptable.")
+            raise TypeError(
+                "Invalid input type for states selection. List or 1D numpy array is acceptable."
+            )
         if type(atoms) == np.ndarray:
             if len(atoms.shape) > 1:
                 raise TypeError("Array of atoms has to be 1-dimensional.")
@@ -48,11 +53,18 @@ class BandStructure(SimpleBands):
         atoms = np.array(atoms)
         states = np.array(states)
 
-        if not (all(lev in self.levels for lev in states) or all(lev in self.subshells for lev in states)):
-            raise ValueError("Some of the selected states are not present in the dataset.")
+        if not (
+            all(lev in self.levels for lev in states)
+            or all(lev in self.subshells for lev in states)
+        ):
+            raise ValueError(
+                "Some of the selected states are not present in the dataset."
+            )
 
         if spin not in ["up", "down", "both"]:
-            raise ValueError("Incorrect spin value selected. \"up\", \"down\" or \"both\" is accepted.")
+            raise ValueError(
+                'Incorrect spin value selected. "up", "down" or "both" is accepted.'
+            )
 
         if name is None:
             name = f"[{' '.join(atoms.astype(str))}] - [{''.join(states.astype(str))}] - [{spin}]"
@@ -61,19 +73,25 @@ class BandStructure(SimpleBands):
         at_ind = []
         if np.issubdtype(atoms.dtype, str):
             if not all(at in self.atomdict.keys() for at in atoms):
-                raise ValueError("Some of the selected atoms are not present in the dataset.")
+                raise ValueError(
+                    "Some of the selected atoms are not present in the dataset."
+                )
             else:
                 for atom in atoms:
                     at_ind += self.atomdict[atom]
         else:
             atoms = atoms - 1
             if not all(at in list(range(sum(self.atomnumbers))) for at in atoms):
-                raise ValueError("Some of the selected atoms are not present in the dataset.")
+                raise ValueError(
+                    "Some of the selected atoms are not present in the dataset."
+                )
             at_ind = [i for i in atoms]
 
         # selecting states
         if (np.vectorize(len)(states) == 1).all():
-            states = np.concatenate([np.argwhere(np.char.find(self.levels, c) != -1) for c in states]).flatten()
+            states = np.concatenate(
+                [np.argwhere(np.char.find(self.levels, c) != -1) for c in states]
+            ).flatten()
         if np.issubdtype(states.dtype, np.integer):
             states = self.levels[states]
         st_ind = []
@@ -83,15 +101,17 @@ class BandStructure(SimpleBands):
         # selecting spin and finalizing
         if self.spin:
             spin_ind = self.spindict[spin]
-            selected = selected[:,:,:,at_ind,:][:,:,:,:,st_ind][spin_ind,:,:,:,:]
+            selected = selected[:, :, :, at_ind, :][:, :, :, :, st_ind][
+                spin_ind, :, :, :, :
+            ]
             selected = selected.sum(0).sum(-1).sum(-1)
         else:
             self.spin = None
-            selected = selected[:,:,at_ind,:][:,:,:,st_ind]
+            selected = selected[:, :, at_ind, :][:, :, :, st_ind]
             selected = selected.sum(-1).sum(-1)
 
         return ProjectedBands(selected, name)
-        
+
     def _get_level_dict(self):
         """
         Create dictionary of levels and spins for selection
@@ -111,7 +131,7 @@ class BandStructure(SimpleBands):
         """
         data = list(self._datagen())
         self._set_data(data)
-    
+
     def _get_proj_bands_verbose(self):
         """
         Read orbital- and ion-resolved data verbosely.
@@ -123,7 +143,10 @@ class BandStructure(SimpleBands):
         for r in gen:
             i += 1
             if i % data_per_point == 0:
-                print(f"Processed {i // data_per_point}/{self.nkpts} k-points...", end="\r")
+                print(
+                    f"Processed {i // data_per_point}/{self.nkpts} k-points...",
+                    end="\r",
+                )
             data.append(r)
         print()
         print("Finishing up...")
@@ -155,6 +178,7 @@ class ProjectedBands:
     Object for storing projected bands after selecting them.
     Consists simply of the data array and of the designated name.
     """
+
     def __init__(self, data, name):
         self.data = data
         self.name = name

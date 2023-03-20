@@ -1,7 +1,7 @@
 import numpy as np
+from lxml import etree
 from scipy.integrate import trapz
 from scipy.interpolate import interp1d
-from lxml import etree
 
 
 class RawDos:
@@ -95,7 +95,7 @@ class RawDos:
         :param float upper: upper bound
         :return: float
         """
-        total = self.totaldos[:, -(1 + int(self.spin)):]
+        total = self.totaldos[:, -(1 + int(self.spin)) :]
         if total.shape[-1] > 1:
             total = total.sum(1)
         inter = interp1d(self.e.flatten(), total.flatten())
@@ -108,8 +108,14 @@ class RawDos:
         read atomic info, used in constructor
         """
 
-        atom_names = [a.text.strip() for a in self.xml.findall("atominfo/array[@name='atomtypes']/set/rc/c")][1::5]
-        atom_numbers = [a.text.strip() for a in self.xml.findall("atominfo/array[@name='atomtypes']/set/rc/c")][0::5]
+        atom_names = [
+            a.text.strip()
+            for a in self.xml.findall("atominfo/array[@name='atomtypes']/set/rc/c")
+        ][1::5]
+        atom_numbers = [
+            a.text.strip()
+            for a in self.xml.findall("atominfo/array[@name='atomtypes']/set/rc/c")
+        ][0::5]
         atom_numbers = [int(n) for n in atom_numbers]
         atom_dict = {}
         cnt = 0
@@ -133,11 +139,26 @@ class RawDos:
         totaldos = self.xml.findall("calculation/dos/total/array/set/set")
         if len(totaldos) == 2:
             self.spin = True
-            totaldosup = self.xml.find("calculation/dos/total/array/set/set[@comment='spin 1']")
-            totaldosup = np.array([i.text.split() for i in totaldosup]).astype(np.float32)
-            totaldosdown = self.xml.find("calculation/dos/total/array/set/set[@comment='spin 2']")
-            totaldosdown = np.array([i.text.split() for i in totaldosdown]).astype(np.float32)
-            total_dos = np.column_stack([totaldosup[:, 1], totaldosdown[:, 1], totaldosup[:, 2], totaldosdown[:, 2]])
+            totaldosup = self.xml.find(
+                "calculation/dos/total/array/set/set[@comment='spin 1']"
+            )
+            totaldosup = np.array([i.text.split() for i in totaldosup]).astype(
+                np.float32
+            )
+            totaldosdown = self.xml.find(
+                "calculation/dos/total/array/set/set[@comment='spin 2']"
+            )
+            totaldosdown = np.array([i.text.split() for i in totaldosdown]).astype(
+                np.float32
+            )
+            total_dos = np.column_stack(
+                [
+                    totaldosup[:, 1],
+                    totaldosdown[:, 1],
+                    totaldosup[:, 2],
+                    totaldosdown[:, 2],
+                ]
+            )
             e = totaldosup[:, 0]
             atomic = self.xml.findall("calculation/dos/partial/array/set/set/set")
             a_up = [[line.text.split() for line in atom] for atom in atomic[::2]]
@@ -145,24 +166,33 @@ class RawDos:
             a_up = np.array(a_up).astype(np.float32)
             a_down = np.array(a_down).astype(np.float32)
             zipped = list(
-                zip([a_up[:, :, i] for i in range(a_up.shape[-1])], [a_down[:, :, i] for i in range(a_down.shape[-1])]))
+                zip(
+                    [a_up[:, :, i] for i in range(a_up.shape[-1])],
+                    [a_down[:, :, i] for i in range(a_down.shape[-1])],
+                )
+            )
             zipped = [i for x in zipped for i in x]
             atomic_dos = np.stack(zipped, axis=-1)[:, :, 2:]
         else:
             self.spin = False
-            totaldos = np.array([i.text.split() for i in totaldos[0]]).astype(np.float32)
+            totaldos = np.array([i.text.split() for i in totaldos[0]]).astype(
+                np.float32
+            )
             total_dos = totaldos[:, 1:]
             e = totaldos[:, 0]
             atomic = self.xml.findall("calculation/dos/partial/array/set/set/set")
             a = [[line.text.split() for line in atom] for atom in atomic]
-            atomic_dos = np.array(a).astype(np.float32)[:,:,1:]
+            atomic_dos = np.array(a).astype(np.float32)[:, :, 1:]
         return total_dos, atomic_dos, e
 
     def _load_levels(self):
         """
         read list of levels, used in constructor
         """
-        levels = [f.text.strip() for f in self.xml.findall("calculation/dos/partial/array/field")][1:]
+        levels = [
+            f.text.strip()
+            for f in self.xml.findall("calculation/dos/partial/array/field")
+        ][1:]
         return np.array(levels)
 
     def select(self, atoms, states, spin="both", name=None):
@@ -177,9 +207,13 @@ class RawDos:
 
         selected = self.atomicdos
         if not type(atoms) in [np.ndarray, list]:
-            raise TypeError("Invalid input type for atoms selection. List or 1D numpy array is acceptable.")
+            raise TypeError(
+                "Invalid input type for atoms selection. List or 1D numpy array is acceptable."
+            )
         if not type(states) in [np.ndarray, list]:
-            raise TypeError("Invalid input type for states selection. List or 1D numpy array is acceptable.")
+            raise TypeError(
+                "Invalid input type for states selection. List or 1D numpy array is acceptable."
+            )
         if type(atoms) == np.ndarray:
             if len(atoms.shape) > 1:
                 raise TypeError("Array of atoms has to be 1-dimensional.")
@@ -189,11 +223,18 @@ class RawDos:
         atoms = np.array(atoms)
         states = np.array(states)
 
-        if not (all(lev in self.levels for lev in states) or all(lev in self.subshells for lev in states)):
-            raise ValueError("Some of the selected states are not present in the dataset.")
+        if not (
+            all(lev in self.levels for lev in states)
+            or all(lev in self.subshells for lev in states)
+        ):
+            raise ValueError(
+                "Some of the selected states are not present in the dataset."
+            )
 
         if spin not in ["up", "down", "both"]:
-            raise ValueError("Incorrect spin value selected. \"up\", \"down\" or \"both\" is accepted.")
+            raise ValueError(
+                'Incorrect spin value selected. "up", "down" or "both" is accepted.'
+            )
 
         if name is None:
             name = f"[{' '.join(atoms.astype(str))}] - [{''.join(states.astype(str))}] - [{spin}]"
@@ -202,20 +243,26 @@ class RawDos:
         at_ind = []
         if np.issubdtype(atoms.dtype, str):
             if not all(at in self.atomdict.keys() for at in atoms):
-                raise ValueError("Some of the selected atoms are not present in the dataset.")
+                raise ValueError(
+                    "Some of the selected atoms are not present in the dataset."
+                )
             else:
                 for atom in atoms:
                     at_ind += self.atomdict[atom]
         else:
             atoms = atoms - 1
             if not all(at in list(range(sum(self.atomnumbers))) for at in atoms):
-                raise ValueError("Some of the selected atoms are not present in the dataset.")
+                raise ValueError(
+                    "Some of the selected atoms are not present in the dataset."
+                )
             at_ind = [i for i in atoms]
         selected = selected[at_ind, :, :]
 
         # selecting states
         if (np.vectorize(len)(states) == 1).all():
-            states = np.concatenate([np.argwhere(np.char.find(self.levels, c) != -1) for c in states]).flatten()
+            states = np.concatenate(
+                [np.argwhere(np.char.find(self.levels, c) != -1) for c in states]
+            ).flatten()
         if np.issubdtype(states.dtype, np.integer):
             states = self.levels[states]
         st_ind = []
@@ -257,7 +304,7 @@ class Dos:
         """
         saves eDOS to .csv file
         """
-        np.savetxt(f"{path}/{self.name}.csv", self.dos, fmt='%.7f', delimiter=",")
+        np.savetxt(f"{path}/{self.name}.csv", self.dos, fmt="%.7f", delimiter=",")
 
     def integrate(self, lower, upper):
         """
@@ -271,6 +318,10 @@ class Dos:
         p2 = np.array([upper, inter(upper)]).reshape(1, 2)
         new = np.concatenate([self.dos, p1, p2])
         new = new[new[:, 0].argsort(), :]
-        int_at_lower = trapz(new[new[:, 0] <= lower][:, 1], x=new[new[:, 0] <= lower][:, 0])
-        int_at_upper = trapz(new[new[:, 0] <= upper][:, 1], x=new[new[:, 0] <= upper][:, 0])
+        int_at_lower = trapz(
+            new[new[:, 0] <= lower][:, 1], x=new[new[:, 0] <= lower][:, 0]
+        )
+        int_at_upper = trapz(
+            new[new[:, 0] <= upper][:, 1], x=new[new[:, 0] <= upper][:, 0]
+        )
         return int_at_upper - int_at_lower

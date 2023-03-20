@@ -1,9 +1,9 @@
+import os
 from functools import partial
-from PyQt6.QtWidgets import QFileDialog
-from PyQt6.QtTest import QTest
-from os import name as osname
-from os import path as ospath
+
 import numpy as np
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QFileDialog
 
 
 class AppController:
@@ -14,7 +14,7 @@ class AppController:
     def __init__(self, view):
         self.view = view
         self.disable_window()
-        osys = osname
+        osys = os.name
         if osys == "posix":
             self.home_path = "/Users"
         else:
@@ -31,9 +31,11 @@ class AppController:
         """
         Browse directories
         """
-        chosen_file = QFileDialog.getOpenFileName(view, "Choose file:", self.home_path, "(vasprun.xml)")[0]
+        chosen_file = QFileDialog.getOpenFileName(
+            view, "Choose file:", self.home_path, "(vasprun.xml)"
+        )[0]
         self.view.load_txt.setText(chosen_file)
-        new_home_path = ospath.dirname(ospath.dirname(chosen_file))
+        new_home_path = os.path.dirname(os.path.dirname(chosen_file))
         self.home_path = new_home_path
 
     def load_data(self):
@@ -65,14 +67,22 @@ class AppController:
         states = np.array(states)
         if len(states) > 0:
             states[np.where(states == "dx2-y2")] = "dx2"
-        if self.view.spin_box.isEnabled() and self.view.spin_btn_group.checkedButton() is not None:
+        if (
+            self.view.spin_box.isEnabled()
+            and self.view.spin_btn_group.checkedButton() is not None
+        ):
             spin = self.view.spin_btn_group.checkedButton().text()
         else:
             spin = "both"
         color = self.view.color_comb.currentText()
         name = self.view.name_text.text()
-        condition = (len(states) > 0) and (len(atoms) > 0) and \
-                    (not np.isin("", atoms)) and (name != "") and (color != "")
+        condition = (
+            (len(states) > 0)
+            and (len(atoms) > 0)
+            and (not np.isin("", atoms))
+            and (name != "")
+            and (color != "")
+        )
         if condition:
             try:
                 self.plot_added_data(atoms, states, spin, name, color)
@@ -81,11 +91,17 @@ class AppController:
             except Exception as e:
                 self.view.dataset_label.setText(e.args[0])
         else:
-            self.view.dataset_label.setText("Make sure you made a valid (non-null) selection")
+            self.view.dataset_label.setText(
+                "Make sure you made a valid (non-null) selection"
+            )
         self.toggle_plot()
         self.populate_items()
-        QTest.qWait(2000)
-        self.view.dataset_label.setText("Select atoms and states, and add them to datasets")
+        QTimer.singleShot(
+            2000,
+            lambda: self.view.dataset_label.setText(
+                "Select atoms and states, and add them to datasets"
+            ),
+        )
 
     def plot_added_data(self, *args):
         pass
