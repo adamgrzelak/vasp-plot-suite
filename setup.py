@@ -50,7 +50,7 @@ setup(
     description="A program for analysis and plotting of electronic from VASP output data",
     long_description=description,
     long_description_content_type="text/markdown",
-    url="https://github.com/adam-bialy/vasp-plot-suite",
+    url="https://github.com/adamgrzelak/vasp-plot-suite",
     author="Adam Grzelak",
     author_email="contact@adamgrzelak.com",
     keywords=["VASP", "eDOS", "band structure", "density of states"],
