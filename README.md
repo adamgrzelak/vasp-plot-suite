@@ -7,7 +7,7 @@ from VASP calculations output. It has two modules:
 a) DosApp: for plotting electronic density of states (eDOS),<br>
 b) BandsApp: for plotting electronic band structure.
 
-Instructions for each of module can be found in their respective README files.
+Instructions for each module can be found in their respective README files.
 
 This library is available via pip:
 <code>pip install vaspplotsuite</code>
